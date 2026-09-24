@@ -116,7 +116,7 @@ input:focus,select:focus{outline:2px solid #4cb87c;outline-offset:1px}
  </div>
 <div class="card p-6 space-y-3">
   <h3 class="font-serif font-bold text-xl text-fr-900">Egutegia automatikoki sortu</h3>
-  <p class="text-sm text-slate-600">Erantzunen arabera, partida bakoitzari data, ordua eta frontoia esleituko zaizkio (jardunaldi bakoitza aste batean). Astegunetan 19:00etan, asteburuetan 11:00etan edo 17:00etan. Emaitzarik ez duten partidak bakarrik aldatzen dira.</p>
+  <p class="text-sm text-slate-600">Erantzunen arabera, partida bakoitzari data, ordua eta frontoia esleituko zaizkio (jardunaldi bakoitza aste batean). Astegunetan 19:00etan, asteburuetan 11:00etan edo 17:00etan. Bikote batek jokatzen dituen bi partiden artean gutxienez 5 egun egongo dira. Emaitzarik ez duten partidak bakarrik aldatzen dira.</p>
   <div class="flex flex-wrap items-center gap-3"><label class="text-sm font-semibold">Ligaren hasiera:</label><input id="gd" type="date" class="px-3 py-2 rounded-xl border border-fr-200 text-sm"><button onclick="genCal()" class="bg-fr-700 hover:bg-fr-800 text-white font-semibold px-6 py-2.5 rounded-full shadow-md shadow-fr-700/20 transition">Sortu egutegia</button></div>
   <p id="gm" class="text-sm text-slate-700 whitespace-pre-line"></p>
  </div>
@@ -297,6 +297,8 @@ const RULES=[
  ['Puntuak','Garaipena: 1 puntu. Porrota: 0 puntu.'],
  ['Berdinketak','Puntuak berdinak badira, tanto diferentziak (alde − kontra) erabakitzen du; gero tantoak alde.'],
  ['Frontoi aukeraketa','Egutegian <b class="text-red-700 bg-red-50 px-1 rounded">gorriz nabarmendutako bikoteak</b> aukeratzen du partida zein frontoitan jokatuko den.'],
+ ['Partiden datak eta orduak','Partidak astegunetan arratsaldez (19:00) jokatzen dira, eta bestela asteburuetan (11:00 edo 17:00). Bikote bakoitzak Eskuragarritasuna atalean markatzen du noiz duen libre eta zein frontoi nahiago duen. Antolatzaileak "Sortu egutegia" sakatzean, partida bakoitzari data, ordua eta frontoia esleitzen zaizkio, bi bikoteak libre dauden orduetan.'],
+ ['Gutxieneko atsedena','Bikote batek jokatzen dituen bi partiden artean gutxienez 5 egun egon behar dira (adibidez, astelehena → larunbata). Jardunaldi bakoitza aste batean jartzen saiatzen da; hutsunerik ez badago, hurrengo astean bilatzen da. Ordurik bateratu ezin bada, egutegiak abisatzen du eta eskuz ebazten da. Ezin duzuen datak antolatzaileak eskuz egiaztatzen ditu.'],
  ['Kanporaketak','8 bikoteek jokatzen dute. Lehen 4 sailkatuak irabazleen koadroan hasten dira (1.a-4.a eta 2.a-3.a) eta 5.etik 8.era bitartekoak galtzaileen koadroan (5.a-8.a eta 6.a-7.a). Irabazleen koadroan galtzen duenak galtzaileen koadrora jaisten da; galtzaileen koadroan galtzen duena kanporatua da.']
 ];
 const num=i=>`<span class="w-9 h-9 shrink-0 rounded-full bg-fr-700 text-white text-sm font-bold flex items-center justify-center">${i+1}</span>`;
@@ -381,22 +383,23 @@ function avCopy(){
 }
 const D3=['Ast','Asr','Asz','Ost','Ol','Lar','Ig'];
 const nm=id=>(teams.find(t=>t.id===id)||{}).name||id;
+const MINGAP=5;
 function genCal(){
  const m=document.getElementById('gm'),v=document.getElementById('gd').value;
  if(!canEdit){m.textContent='Ezin da gorde.';return}
  if(!v){m.textContent='Aukeratu ligaren hasiera data.';return}
- const s0=new Date(v+'T12:00:00'),warn=[];let placed=0,tot=0;
+ const s0=new Date(v+'T12:00:00'),warn=[],last={},use={};let placed=0,tot=0;
+ const u=s=>use[s.id]||(use[s.id]=[]);
  rounds().forEach((R,ri)=>{
   const slots=[];
-  for(let i=0;i<7;i++){const d=new Date(s0);d.setDate(s0.getDate()+ri*7+i);const wd=(d.getDay()+6)%7;SLOT(wd).forEach(([k])=>slots.push({d,wd,k,used:[]}))}
-  const ok=(id,s)=>{const a=AV[id];return !a||(a.days||[]).includes(s.wd+s.k)};
+  for(let i=0;i<14;i++){const d=new Date(s0);d.setDate(s0.getDate()+ri*7+i);const wd=(d.getDay()+6)%7;SLOT(wd).forEach(([k])=>slots.push({d,wd,k,pri:i<7,id:d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()+k}))}
+  const ok=(id,s)=>{const a=AV[id];return(!last[id]||Math.round((s.d-last[id])/864e5)>=MINGAP)&&(!a||(a.days||[]).includes(s.wd+s.k))};
   R.map(([x,y])=>({x,y,c:slots.filter(s=>ok(x,s)&&ok(y,s))})).sort((a,b)=>a.c.length-b.c.length).forEach(({x,y,c})=>{
    if(res(x,y))return; tot++;
-   const free=c.filter(s=>s.used.length<FR.length);
-   if(!free.length){warn.push(`${ri+1}. jardunaldia: ${nm(x)} vs ${nm(y)}: ez dago ordu bateraturik`);return}
-   const s=free.reduce((a,b)=>b.used.length<a.used.length?b:a);
-   const pr=((AV[x]||{}).fr||[]).filter(n=>FR.includes(n)),fr=pr.find(n=>!s.used.includes(n))||FR.find(n=>!s.used.includes(n));
-   s.used.push(fr);
+   const free=c.filter(s=>u(s).length<FR.length).sort((a,b)=>(b.pri-a.pri)||(u(a).length-u(b).length));
+   if(!free.length){warn.push(`${ri+1}. jardunaldia: ${nm(x)} vs ${nm(y)}: ez dago ordu bateraturik (gutxienez ${MINGAP} egun partiden artean)`);return}
+   const s=free[0],pr=((AV[x]||{}).fr||[]).filter(n=>FR.includes(n)),fr=pr.find(n=>!u(s).includes(n))||FR.find(n=>!u(s).includes(n));
+   u(s).push(fr);last[x]=last[y]=s.d;
    const k=key(x,y),e=E0(k),p=n=>String(n).padStart(2,'0');
    e.d=`${D3[s.wd]} ${p(s.d.getDate())}/${p(s.d.getMonth()+1)} ${s.wd<5?'19:00':s.k==='g'?'11:00':'17:00'}`;e.f=fr;
    put('matches/'+k,e);placed++;
