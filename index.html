@@ -132,9 +132,13 @@ input:focus,select:focus{outline:2px solid #4cb87c;outline-offset:1px}
   <h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900">Kanporaketak</h2><div class="bar mb-3"></div>
   <p class="text-slate-600">6 bikoteak sartzen dira: lehen 4 sailkatuek irabazleen koadroan hasten dute eta 5.ak eta 6.ak galtzaileen koadroan. Irabazleen koadroan galtzen duenak bigarren aukera bat du; galtzaileen koadroan galtzen duena kanporatua da.</p>
  </div>
- <div class="card p-5 overflow-x-auto">
+ <div class="card p-5 hidden sm:block overflow-x-auto">
   <div id="bracket"></div>
-  <div class="flex flex-wrap gap-x-8 gap-y-2 mt-4 pt-4 border-t border-fr-100 text-xs text-slate-600">
+ </div>
+ <div class="card p-5 sm:hidden">
+  <div id="bracketm"></div>
+ </div>
+ <div class="card p-5 flex flex-wrap gap-x-8 gap-y-2 text-xs text-slate-600">
    <span class="flex items-center gap-2"><svg width="34" height="10"><path d="M0 5H28" stroke="#1f7a49" stroke-width="2"/><path d="M26 1L33 5L26 9z" fill="#1f7a49"/></svg>Irabazleak aurrera egiten du</span>
    <span class="flex items-center gap-2"><svg width="34" height="10"><path d="M0 5H28" stroke="#fb7185" stroke-width="2" stroke-dasharray="4 3"/><path d="M26 1L33 5L26 9z" fill="#fb7185"/></svg>Galtzailea galtzaileen koadrora jaisten da</span>
   </div>
@@ -178,12 +182,32 @@ input:focus,select:focus{outline:2px solid #4cb87c;outline-offset:1px}
 </section>
 </main>
 
-<footer class="border-t border-fr-100 py-6 text-center text-xs text-slate-500">Pala Txapelketa · Oiartzun</footer>
+<footer class="border-t border-fr-100 py-6 text-center text-xs text-slate-500">Pala Txapelketa · Oiartzun<div id="prof" class="hidden fixed inset-0 z-[60] bg-black/40 flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="if(event.target===this)closeProfile()">
+ <div class="card w-full sm:max-w-lg max-h-[88vh] overflow-y-auto rounded-b-none sm:rounded-b-3xl">
+  <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-fr-100 px-6 py-4 flex items-center justify-between">
+   <h3 id="pf-name" class="font-serif font-bold text-xl text-fr-900"></h3>
+   <button onclick="closeProfile()" class="text-slate-400 hover:text-slate-700 text-2xl leading-none px-2">×</button>
+  </div>
+  <div class="p-6 space-y-6">
+   <div id="pf-stats" class="grid grid-cols-4 gap-2 text-center"></div>
+   <div>
+    <label class="block text-xs font-bold uppercase tracking-wider text-fr-700 mb-2">Deskribapena</label>
+    <textarea id="pf-desc" rows="3" placeholder="Idatzi zerbait bikote honi buruz..." class="w-full px-4 py-3 rounded-xl border border-fr-200 text-sm"></textarea>
+    <div class="flex items-center gap-3 mt-2"><button id="pf-save" onclick="saveProfile()" class="bg-fr-700 hover:bg-fr-800 text-white font-semibold px-5 py-2.5 rounded-full text-sm shadow-md shadow-fr-700/20 transition">Gorde</button><span id="pf-msg" class="text-sm text-fr-700 font-medium"></span></div>
+   </div>
+   <div>
+    <h4 class="text-xs font-bold uppercase tracking-wider text-fr-700 mb-2">Partidak</h4>
+    <div id="pf-matches" class="space-y-2"></div>
+   </div>
+  </div>
+ </div>
+</div>
+</footer>
 
 <script>
 const DEF=[["t1","Arrizabalaga - Etxeberria"],["t2","Goñi Anaiak"],["t3","Lasa - Mendizabal"],["t4","Oiartzun Berri"],["t5","Zubeldia - Agirre"],["t6","Bidasoa Pala"]].map(([id,name],i)=>({id,name,ord:i+1}));
 let teams=[], rawT=[], M={}, PO={}, db=null, canEdit=false, booted=false, seeded=null, pending=false;
-let AV={},avDirty=false,CP=[],CHN=null;const Q={};
+let AV={},avDirty=false,CP=[],CHN=null,PFID=null;const Q={};
 const put=(p,d)=>{if(!db||!canEdit)return;Q[p]=(Q[p]||Promise.resolve()).then(()=>db.doc(p).set(d)).catch(e=>{if(e&&e.code==='permission-denied'){canEdit=false;refresh()}})};
 const del=p=>{if(!db||!canEdit)return;Q[p]=(Q[p]||Promise.resolve()).then(()=>db.doc(p).delete()).catch(()=>{})};
 const FR=["Kontzejupe","Arragua","Karrika","Gurutze"];
@@ -229,11 +253,36 @@ function table(){
  return Object.values(t).sort((a,b)=>b.p-a.p||(b.f-b.c)-(a.f-a.c)||b.f-a.f);
 }
 const E0=k=>Object.assign({a:null,b:null,f:'',d:''},M[k]);
+function openProfile(id){PFID=id;document.getElementById('prof').classList.remove('hidden');renderProfile()}
+function closeProfile(){document.getElementById('prof').classList.add('hidden');PFID=null}
+function saveProfile(){
+ const m=document.getElementById('pf-msg');
+ if(!canEdit){m.textContent='Ezin da gorde';return}
+ const tm=teams.find(x=>x.id===PFID);if(!tm)return;
+ put('teams/'+PFID,{name:tm.name,ord:tm.ord,desc:document.getElementById('pf-desc').value.trim()});
+ m.textContent='Gordeta ✓';setTimeout(()=>m.textContent='',2000);
+}
+function renderProfile(){
+ const tm=teams.find(x=>x.id===PFID);if(!tm){closeProfile();return}
+ document.getElementById('pf-name').textContent=tm.name;
+ document.getElementById('pf-desc').value=tm.desc||'';
+ document.getElementById('pf-desc').disabled=!canEdit;
+ document.getElementById('pf-save').classList.toggle('hidden',!canEdit);
+ const r=table().find(x=>x.id===PFID)||{j:0,g:0,l:0,f:0,c:0,p:0};
+ document.getElementById('pf-stats').innerHTML=[['J',r.j],['G',r.g],['Gal',r.l],['Pt',r.p]].map(([a,b])=>`<div class="bg-fr-50 rounded-xl py-2.5"><div class="text-[10px] uppercase font-bold text-fr-700">${a}</div><div class="font-serif font-bold text-lg text-fr-900">${b}</div></div>`).join('');
+ const ms=[];
+ rounds().forEach(R=>R.forEach(([x,y])=>{if(x!==PFID&&y!==PFID)return;const rr=res(x,y);const opp=x===PFID?y:x;ms.push({opp,rr:rr?(x===PFID?rr:[rr[1],rr[0]]):null,d:(M[key(x,y)]||{}).d||''})}));
+ document.getElementById('pf-matches').innerHTML=ms.length?ms.map(mm=>{const w=mm.rr&&mm.rr[0]>mm.rr[1],l=mm.rr&&mm.rr[0]<mm.rr[1];return `<div class="flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-50 border border-slate-100 text-sm"><span class="truncate">${tn(mm.opp)}${mm.d?` <span class="text-slate-400 text-xs">· ${esc(mm.d)}</span>`:''}</span><span class="font-bold ${w?'text-fr-600':l?'text-rose-600':'text-slate-400'}">${mm.rr?mm.rr[0]+' - '+mm.rr[1]:'—'}</span></div>`}).join(''):'<p class="text-sm text-slate-400">Oraindik ez du partidarik jokatu.</p>';
+}
+
 function setD(x,y,v){const k=key(x,y),d=E0(k);d.d=v.trim();put('matches/'+k,d)}
 function setScore(x,y,side,v){const k=key(x,y),d=E0(k);d[(side===0)===(x<y)?'a':'b']=v===''?null:+v;put('matches/'+k,d)}
 function setF(x,y,v){const k=key(x,y),d=E0(k);d.f=v;put('matches/'+k,d)}
 function addTeam(e){e.preventDefault();const i=document.getElementById('nt'),v=i.value.trim();if(v){const n=Date.now();put('teams/t'+n,{name:v,ord:n});i.value=''}}
-function rmTeam(id){del('teams/'+id)}
+function rmTeam(id){
+ if(!confirm('Ziur zaude '+nm(id)+' bikotea ezabatu nahi duzula?\nHonek bere emaitzak eta datu guztiak ezabatuko ditu.'))return;
+ del('teams/'+id);
+}
 
 function renderStd(){
  const T=table();
@@ -241,11 +290,11 @@ function renderStd(){
   const d=r.f-r.c;
   return `<tr class="transition hover:bg-fr-50/70 ${i<4?'bg-fr-50/40':''}">
   <td class="p-4 text-center"><span class="inline-flex w-8 h-8 items-center justify-center rounded-full text-xs font-bold ${i===0?'bg-fr-700 text-white':i<4?'bg-fr-100 text-fr-800':'bg-slate-100 text-slate-500'}">${i+1}</span></td>
-  <td class="p-4 font-semibold text-slate-900">${tn(r.id)}</td>
+  <td class="p-4 font-semibold"><button onclick="openProfile('${r.id}')" class="text-slate-900 hover:text-fr-700 underline decoration-fr-200 underline-offset-4 transition text-left">${tn(r.id)}</button></td>
   <td class="p-4 text-center">${r.j}</td><td class="p-4 text-center text-fr-600 font-bold">${r.g}</td><td class="p-4 text-center">${r.l}</td>
   <td class="p-4 text-center">${r.f}</td><td class="p-4 text-center">${r.c}</td><td class="p-4 text-center font-mono ${d>0?'text-fr-600':d<0?'text-rose-600':''}">${d>0?'+':''}${d}</td>
   <td class="p-4 text-center font-serif font-extrabold text-lg text-fr-800">${r.p}</td></tr>`}).join('');
- document.getElementById('tl').innerHTML=teams.map(t=>`<tr><td class="py-3 font-semibold">${esc(t.name)}</td><td class="py-3 text-right"><button ${canEdit?'':'hidden'} onclick="rmTeam('${t.id}')" class="text-rose-600 hover:bg-rose-100 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-full transition">Ezabatu</button></td></tr>`).join('');
+ document.getElementById('tl').innerHTML=teams.map(t=>`<tr><td class="py-3"><button onclick="openProfile('${t.id}')" class="font-semibold text-slate-900 hover:text-fr-700 underline decoration-fr-200 underline-offset-4 transition text-left">${esc(t.name)}</button></td><td class="py-3 text-right"><button ${canEdit?'':'hidden'} onclick="rmTeam('${t.id}')" class="text-rose-600 hover:bg-rose-100 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-full transition">Ezabatu</button></td></tr>`).join('');
  const all=rounds().flat(), played=all.filter(([x,y])=>{const r=res(x,y);return r&&r[0]!==r[1]}).length;
  const lead=T[0]&&T[0].j?tn(T[0].id):'—';
  document.getElementById('stats').innerHTML=[['users','Bikoteak',teams.length],['ok','Jokatutako partidak',played+' / '+all.length],['cup','Liderra',lead]]
@@ -279,9 +328,27 @@ function card(id,a,b,title,x,y){
   <input type="number" min="0" ${t==null||!canEdit?'disabled':''} value="${s[i]??''}" onchange="setPO('${id}',${i},this.value)" class="w-11 text-center text-xs font-bold bg-white border border-fr-200 rounded py-0.5 disabled:opacity-40"></div>`;
  return `<div class="absolute w-[170px] bg-white border border-fr-200 rounded-xl overflow-hidden shadow-md shadow-fr-900/10" style="left:${x}px;top:${y}px"><div class="h-5 px-2 flex items-center text-[10px] font-bold uppercase tracking-wide text-fr-700 bg-fr-50 truncate">${title}</div><div class="divide-y divide-fr-50">${row(a,0)}${row(b,1)}</div></div>`;
 }
+function cardFlow(id,a,b,title){
+ const w=W(id,a,b),s=PO[id]||[null,null];
+ const row=(t,i)=>`<div class="h-10 flex items-center justify-between gap-2 px-3 ${w&&w[0]===t?'bg-fr-100 font-bold text-fr-900':''}">
+  <span class="text-sm truncate">${t==null?'—':tn(t)}</span>
+  <input type="number" min="0" ${t==null||!canEdit?'disabled':''} value="${s[i]??''}" onchange="setPO('${id}',${i},this.value)" class="w-12 text-center text-sm font-bold bg-white border border-fr-200 rounded py-1 disabled:opacity-40"></div>`;
+ return `<div class="bg-white border border-fr-200 rounded-xl overflow-hidden shadow-sm"><div class="h-6 px-3 flex items-center text-[11px] font-bold uppercase tracking-wide text-fr-700 bg-fr-50 truncate">${title}</div><div class="divide-y divide-fr-50">${row(a,0)}${row(b,1)}</div></div>`;
+}
+function renderBracketMobile(T,w1,w2,wu,wa,wb,wl,wf,ch){
+ const el=document.getElementById('bracketm'),arrow=`<div class="flex justify-center py-1 text-fr-400">${ic('arr','w-5 h-5 rotate-90')}</div>`;
+ const rounds=[
+  ['1. txanda',[cardFlow('m1',T[0],T[3],'Irabazleak · 1.a - 4.a'),cardFlow('m2',T[1],T[2],'Irabazleak · 2.a - 3.a'),cardFlow('l1',w1&&w1[1],T[5],'Galtzaileak · vs 6.a'),cardFlow('l2',w2&&w2[1],T[4],'Galtzaileak · vs 5.a')]],
+  ['2. txanda',[cardFlow('ub',w1&&w1[0],w2&&w2[0],'Irabazleak · Finala'),cardFlow('lb2',wa&&wa[0],wb&&wb[0],'Galtzaileak · Erdiak')]],
+  ['3. txanda',[cardFlow('lf',wl&&wl[0],wu&&wu[1],'Galtzaileak · Finala')]],
+  ['Finala',[cardFlow('gf',wu&&wu[0],wf&&wf[0],'Azken finala')]]
+ ];
+ el.innerHTML=rounds.map(([h,cs],i)=>`<div class="${i?'mt-1':''}">${arrow.repeat(i?1:0)}<div class="text-center text-xs font-bold text-white bg-fr-900 rounded-lg py-1.5 mb-3">${h}</div><div class="space-y-3">${cs.join(arrow)}</div></div>`).join('')
+  +`${arrow}<div class="text-center bg-amber-50 border-2 border-amber-400 rounded-2xl py-4"><div class="text-[11px] font-bold text-amber-800 uppercase tracking-wide">🏆 Txapelduna</div><div class="font-serif font-bold text-base mt-1">${ch?tn(ch[0]):'—'}</div></div>`;
+}
 function renderBracket(){CHN=null;
- const el=document.getElementById('bracket'), T=table().map(r=>r.id);
- if(T.length<6){el.innerHTML='<p class="p-6 text-center text-slate-500">Gutxienez 6 bikote behar dira kanporaketetarako.</p>';return}
+ const el=document.getElementById('bracket'), elm=document.getElementById('bracketm'), T=table().map(r=>r.id);
+ if(T.length<6){const msg='<p class="p-6 text-center text-slate-500">Gutxienez 6 bikote behar dira kanporaketetarako.</p>';el.innerHTML=msg;elm.innerHTML=msg;return}
  const w1=W('m1',T[0],T[3]),w2=W('m2',T[1],T[2]);
  const wu=W('ub',w1&&w1[0],w2&&w2[0]);
  const wa=W('l1',w1&&w1[1],T[5]),wb=W('l2',w2&&w2[1],T[4]);
@@ -308,6 +375,7 @@ function renderBracket(){CHN=null;
   ${card('lf',wl&&wl[0],wu&&wu[1],'Galtzaileak · Finala',660,305)}
   ${card('gf',wu&&wu[0],wf&&wf[0],'Azken finala',880,200)}
   <div class="absolute w-[170px] text-center bg-amber-50 border-2 border-amber-400 rounded-2xl py-3 shadow-md" style="left:880px;top:320px"><div class="text-[11px] font-bold text-amber-800 uppercase tracking-wide">🏆 Txapelduna</div><div class="font-serif font-bold text-sm mt-1 px-2 truncate">${ch?tn(ch[0]):'—'}</div></div></div>`;
+ renderBracketMobile(T,w1,w2,wu,wa,wb,wl,wf,ch);
 }
 const HOW=[
  ['1. txanda','1.a vs 4.a eta 2.a vs 3.a jokatzen dira. 5.a eta 6.a galtzaileen koadroan hasten dira, jokatu gabe.'],
@@ -337,7 +405,7 @@ function seed(){
  put('meta/seed',{done:true}); DEF.forEach(t=>put('teams/'+t.id,{name:t.name,ord:t.ord}));
 }
 function refresh(){
- applyT();renderStd();renderCal();renderBracket();renderAv();renderChamps();
+ applyT();renderStd();renderCal();renderBracket();renderAv();renderChamps();if(PFID)renderProfile();
  document.getElementById('ro').classList.toggle('hidden',canEdit||!booted);
  document.getElementById('addf').classList.toggle('hidden',!canEdit);
  const w=document.getElementById('tlw');w.classList.toggle('lg:col-span-2',canEdit);w.classList.toggle('lg:col-span-3',!canEdit);
