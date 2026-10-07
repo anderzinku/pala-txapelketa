@@ -145,6 +145,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=num
 #std tr:last-child td{border-bottom-color:transparent}#std tr:hover td{background:#f1faf4}
 #std tr.r1 td{background:#fff8e1}#std tr.r1 td:first-child{background:linear-gradient(90deg,#f7e3a0,#fff8e1)}#std tr.r1:hover td{background:#fff2c9}
 @media(max-width:640px){.stw{padding:.2rem .5rem .4rem}.stt td,.stt td:first-child,.stt td:last-child{padding:.7rem .35rem}}
+.bd-k{background:#d1fae5;color:#065f46}
 </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col">
@@ -234,7 +235,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=num
   <p class="text-slate-600">Jardunaldi bakoitzean 3 partida. <span class="font-semibold text-red-700">Gorriz nabarmendutako bikoteak</span> aukeratzen du frontoia. Sartu emaitzak eta sailkapena automatikoki eguneratuko da.</p>
  </div>
  <div class="flex items-center gap-3"><label for="cf" class="text-xs font-bold uppercase tracking-wider text-fr-700">Bikotea</label><select id="cf" onchange="CF=this.value;renderCal()" class="px-3 py-2 rounded-xl border border-fr-200 text-sm bg-white max-w-[70%]"></select></div>
- <div id="aud"></div>
+ <div id="org"></div><div id="aud"></div>
  <div id="nextlist" class="space-y-3"></div>
  <div id="cal" class="space-y-10"></div>
 </section>
@@ -321,6 +322,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=num
 </section>
 </main>
 
+<div id="mp" class="hidden fixed inset-0 z-[60] bg-black/40 flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="if(event.target===this)closeMP()"><div id="mpb" class="card w-full sm:max-w-lg max-h-[88vh] overflow-y-auto rounded-b-none sm:rounded-b-3xl"></div></div>
 <footer class="border-t border-fr-100 py-6 text-center text-xs text-slate-500">Pala Txapelketa · Oiartzun<div id="prof" class="hidden fixed inset-0 z-[60] bg-black/40 flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="if(event.target===this)closeProfile()">
  <div class="card w-full sm:max-w-lg max-h-[88vh] overflow-y-auto rounded-b-none sm:rounded-b-3xl">
   <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-fr-100 px-6 py-4 flex items-center justify-between">
@@ -510,7 +512,7 @@ function renderProfile(){
  if(st)st.innerHTML=last5.length?`<div class="flex items-center gap-2"><span class="text-[10px] uppercase font-bold text-fr-700">Azken partidak</span><div class="flex gap-1.5">${last5.map(mm=>`<span class="w-3.5 h-3.5 rounded-full ${mm.rr[0]>mm.rr[1]?'bg-fr-500':'bg-rose-400'}" title="${mm.rr[0]}-${mm.rr[1]}"></span>`).join('')}</div></div>`:'';
 }
 
-function setD(x,y,v){const k=key(x,y),d=E0(k);d.d=v.trim();put('matches/'+k,d)}
+function setD(x,y,v){const k=key(x,y),d=E0(k);d.d=v.trim();d.c=false;put('matches/'+k,d);[x,y].forEach(t=>{const r=rsp(k,t);if(r.s)put('resp/'+rk(k,t),{k,t,s:'',p:r.p||[]})})}
 function setScore(x,y,side,v){
  v=String(v).trim();
  if(v!==''&&!/^\d{1,2}$/.test(v)){toast('Zenbaki osoa sartu (0-99)','warn');document.getElementById('cal').__l=null;refresh();return}
@@ -573,12 +575,12 @@ function renderCal(){
    const r=res(x,y)||['',''], f=(M[key(x,y)]||{}).f||'', clashed=clash(x,y);
    const pl=r[0]!==''&&r[1]!==''&&+r[0]!==+r[1], w=pl?(+r[0]>+r[1]?0:1):-1, e=M[key(x,y)]||{};
    const row=(id,side,ch)=>`<div class="trow ${w===side?'win':w>=0?'lose':''} ${ch?'ch':''}"><div class="min-w-0 flex-1"><div class="tnm">${tn(id)}${w===side?' <span class="text-emerald-600">✓</span>':''}</div>${ch?'<span class="chip-r">Aukeratzailea</span>':''}</div><input type="number" inputmode="numeric" min="0" max="99" step="1" aria-label="${esc(nm(id))}: tantoak" value="${r[side]}" onchange="setScore('${x}','${y}',${side},this.value)" ${canEdit?'':'disabled'} class="scin tnum"></div>`;
-   const st=clashed?['Gatazka','bd-r']:pl?['Jokatua','bd-g']:e.d?['Programatua','bd-b']:['Zain','bd-s'];
+   const st=stOf(x,y,clashed,pl,e);
    return `<article class="card hv mc"><div class="mh"><span class="bd ${st[1]}">${st[0]}</span><span class="mdt">${e.d?`<b>${esc(e.d)}</b>`:'<b class="no">Data zehaztu gabe</b>'}${f?`<em>${esc(f)}</em>`:''}</span></div>
     <div class="p-3 space-y-1.5">${row(x,0,true)}${row(y,1,false)}</div>
-    <div class="px-3 pb-3 grid grid-cols-2 gap-2"><select aria-label="Frontoia" ${canEdit?'':'disabled'} onchange="setF('${x}','${y}',this.value)" class="mf"><option value="">Frontoia...</option>${FR.map(o=>`<option ${o===f?'selected':''}>${o}</option>`).join('')}</select>
+    <div class="px-3 pb-3 grid grid-cols-2 gap-2"><select aria-label="Frontoia" ${canEdit?'':'disabled'} onchange="setF('${x}','${y}',this.value)" class="mf"><option value="">Frontoia...</option>${FR.map(o=>`<option ${o===f?'selected':''} ${e.d&&o!==f&&(useMap[e.d.trim()+'|'+o]||[]).some(kk=>kk!==key(x,y))?'disabled':''}>${o}</option>`).join('')}</select>
     <input type="text" aria-label="Data eta ordua" ${canEdit?'':'disabled'} value="${esc(e.d||'')}" placeholder="Lar 12/10 19:00" onchange="setD('${x}','${y}',this.value)" class="mf"></div>
-    ${clashed?'<p class="px-3 pb-3 -mt-1 text-[11px] font-semibold text-rose-600">⚠ Beste partida batek frontoi hau du ordu berean</p>':''}</article>`;}).join('')}</div></div>`).join('');
+    <div class="px-3 pb-3"><button onclick="openMatch('${x}','${y}')" class="w-full border-2 border-fr-200 hover:bg-fr-50 text-fr-800 font-semibold py-2 rounded-xl text-xs transition">Noiz jokatu dezakegu?</button></div>${clashed?'<p class="px-3 pb-3 -mt-1 text-[11px] font-semibold text-rose-600">⚠ Beste partida batek frontoi hau du ordu berean</p>':''}</article>`;}).join('')}</div></div>`).join('');
 }
 // KANPORAKETAK
 function W(id,a,b){
@@ -655,7 +657,7 @@ function seed(){
 }
 let rq=0;function refresh(){if(rq)return;rq=setTimeout(()=>{rq=0;doRefresh()},30)}
 function doRefresh(){
- applyT();if(!gotT){skel();if(booted)hideLoader();return}renderStd();renderCal();renderBracket();renderAv();renderChamps();renderNext();if(PFID)renderProfile();
+ applyT();if(!gotT){skel();if(booted)hideLoader();return}renderStd();renderCal();renderBracket();renderAv();renderChamps();renderNext();renderOrg();if(MPS)renderMP();if(gotM&&gotR)openHash();if(PFID)renderProfile();
  if(booted)hideLoader();
  document.getElementById('ro').classList.toggle('hidden',canEdit||!booted);
  document.getElementById('addf').classList.toggle('hidden',!canEdit);
@@ -673,10 +675,12 @@ function start(){
  canEdit=true;
  const er=()=>{gotT=true;refresh()};setTimeout(()=>{if(!gotT){gotT=true;refresh()}},6000);
  db.collection('teams').orderBy('ord').onSnapshot(s=>{gotT=true;rawT=s.docs.map(d=>({id:d.id,name:String(d.data().name||''),ord:d.data().ord}));seed();soft(s.metadata.hasPendingWrites)},er);
- db.collection('matches').onSnapshot(s=>{M={};s.docs.forEach(d=>M[d.id]=d.data());soft(s.metadata.hasPendingWrites)},er);
+ db.collection('matches').onSnapshot(s=>{gotM=true;M={};s.docs.forEach(d=>M[d.id]=d.data());soft(s.metadata.hasPendingWrites)},er);
  db.collection('po').onSnapshot(s=>{PO={};s.docs.forEach(d=>{const v=d.data();PO[d.id]=[v.s0==null?null:v.s0,v.s1==null?null:v.s1]});soft(s.metadata.hasPendingWrites)},er);
  db.collection('avail').onSnapshot(s=>{AV={};s.docs.forEach(d=>AV[d.id]=d.data());if(!avDirty)avLoad();soft(s.metadata.hasPendingWrites)},er);
  db.collection('champs').onSnapshot(s=>{CP=s.docs.map(d=>Object.assign({id:d.id},d.data()));soft(s.metadata.hasPendingWrites)},er);
+ db.collection('resp').onSnapshot(s=>{RS={};s.docs.forEach(d=>RS[d.id]=d.data());gotR=true;soft(s.metadata.hasPendingWrites)},er);
+ db.doc('meta/liga').onSnapshot(s=>{LS=s.data||null;soft(false)},er);
  db.doc('meta/seed').onSnapshot(s=>{if(!s.metadata.fromCache){seeded=s.exists;seed();soft(false)}},er);
  refresh();
 }
@@ -734,15 +738,16 @@ function genCal(){
  const m=document.getElementById('gm'),v=document.getElementById('gd').value;
  if(!canEdit){m.textContent='Ezin da gorde.';return}
  if(!v){m.textContent='Aukeratu ligaren hasiera data.';return}
+ put('meta/liga',{start:v});
  const s0=new Date(v+'T12:00:00'),warn=[],dts={},use={};let placed=0,tot=0;
  const u=s=>use[s.id]||(use[s.id]=[]);
- rounds().flat().forEach(([x,y])=>{if(!res(x,y))return;const e=M[key(x,y)]||{},t=parseD(e.d);if(!t)return;const d0=new Date(t.getFullYear(),t.getMonth(),t.getDate(),12);[x,y].forEach(i=>(dts[i]=dts[i]||[]).push(d0));if(e.f)u({id:t.getFullYear()+'-'+t.getMonth()+'-'+t.getDate()+(t.getHours()<14?'g':'a')}).push(e.f)});
+ rounds().flat().forEach(([x,y])=>{if(!res(x,y)&&!(M[key(x,y)]||{}).c)return;const e=M[key(x,y)]||{},t=parseD(e.d);if(!t)return;const d0=new Date(t.getFullYear(),t.getMonth(),t.getDate(),12);[x,y].forEach(i=>(dts[i]=dts[i]||[]).push(d0));if(e.f)u({id:t.getFullYear()+'-'+t.getMonth()+'-'+t.getDate()+(t.getHours()<14?'g':'a')}).push(e.f)});
  rounds().forEach((R,ri)=>{
   const slots=[];
   for(let i=0;i<14;i++){const d=new Date(s0);d.setDate(s0.getDate()+ri*7+i);const wd=(d.getDay()+6)%7;SLOT(wd).forEach(([k])=>slots.push({d,wd,k,pri:i<7,id:d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()+k}))}
   const ok=(id,s)=>{const a=AV[id];return(dts[id]||[]).every(l=>Math.abs(Math.round((s.d-l)/864e5))>=MINGAP)&&(!a||(a.days||[]).includes(s.wd+s.k))};
   R.map(([x,y])=>({x,y,c:slots.filter(s=>ok(x,s)&&ok(y,s))})).sort((a,b)=>a.c.length-b.c.length).forEach(({x,y,c})=>{
-   if(res(x,y))return; tot++;
+   if(res(x,y)||(M[key(x,y)]||{}).c)return; tot++;
    const free=c.filter(s=>u(s).length<FR.length).sort((a,b)=>(b.pri-a.pri)||(u(a).length-u(b).length));
    if(!free.length){warn.push(`${ri+1}. jardunaldia: ${nm(x)} vs ${nm(y)}: ez dago ordu bateraturik (gutxienez ${MINGAP} egun partiden artean)`);return}
    const s=free[0],pr=((AV[x]||{}).fr||[]).filter(n=>FR.includes(n)),fr=pr.find(n=>!u(s).includes(n))||FR.find(n=>!u(s).includes(n));
@@ -787,6 +792,78 @@ function addChamp(){
 }
 function addCur(){const y=String(new Date().getFullYear());put('champs/c'+Date.now(),{y,pair:nm(CHN),runner:'',note:'',ord:+y})}
 function delChamp(id){del('champs/'+id)}
+/* ===== PARTIDA BAKOITZEKO ESKURAGARRITASUNA ===== */
+let RS={},LS=null,MPS=null,hashDone=false,gotM=false,gotR=false,ORGT='',ORGH='';
+const p2=n=>String(n).padStart(2,'0');
+const isoD=d=>d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
+const fromIso=s=>{const a=s.split('-');return new Date(+a[0],+a[1]-1,+a[2],12)};
+const wdOf=d=>(d.getDay()+6)%7;
+const lbl=s=>{const a=s.split(' '),d=fromIso(a[0]);return D3[wdOf(d)]+' '+p2(d.getDate())+'/'+p2(d.getMonth()+1)+' '+a[1]};
+const slotsOf=d=>wdOf(d)<5?['19:00']:['11:00','17:00'];
+const rk=(k,t)=>k+'_'+t,rsp=(k,t)=>RS[rk(k,t)]||{};
+const monday=d=>{const m=new Date(d.getFullYear(),d.getMonth(),d.getDate(),12);m.setDate(m.getDate()-wdOf(m));return m};
+const SL={ok:'Ondo ✓',ezin:'Ezin dute ✗',ez:'Oraindik ez dakite'};
+const myT=()=>{try{return localStorage.getItem('me')}catch(e){return null}};
+const roundOf=k=>rounds().findIndex(R=>R.some(([a,b])=>key(a,b)===k));
+function stOf(x,y,clashed,pl,e){const k=key(x,y);
+ if(pl)return['Jokatua','bd-g'];if(clashed)return['Gatazka','bd-r'];if(e.c&&e.d)return['Konfirmatua','bd-k'];
+ if([x,y].some(t=>rsp(k,t).s==='ezin'))return['Gatazka','bd-r'];
+ return e.d?['Programatua','bd-b']:['Zain','bd-s']}
+function slotIssue(x,y,k,iso,h){
+ const d=fromIso(iso),per=h<'14'?'g':'a';let used=0;
+ for(const[a,b]of rounds().flat()){const kk=key(a,b);if(kk===k)continue;const dt=parseD((M[kk]||{}).d);if(!dt)continue;
+  const g=Math.round((d-new Date(dt.getFullYear(),dt.getMonth(),dt.getDate(),12))/864e5);
+  if([x,y].some(t=>t===a||t===b)&&Math.abs(g)<MINGAP)return'Atsedena: '+Math.abs(g)+' egun bakarrik beste partidarekin';
+  if(g===0&&(dt.getHours()<14?'g':'a')===per)used++}
+ return used>=FR.length?'Ez dago frontoi libreik':''}
+function openMatch(x,y){const k=key(x,y),e=M[k]||{};let me=myT();if(me!==x&&me!==y)me=null;
+ const ri=roundOf(k),dt=parseD(e.d);
+ const wk=dt?monday(dt):(LS&&LS.start?monday(new Date(fromIso(LS.start).getTime()+ri*7*864e5)):monday(new Date()));
+ MPS={k,x,y,wk,day:null,me,sel:null};document.getElementById('mp').classList.remove('hidden');renderMP()}
+function closeMP(){MPS=null;document.getElementById('mp').classList.add('hidden')}
+function setMe(v){if(!v)return;try{localStorage.setItem('me',v)}catch(e){}MPS.me=v;MPS.sel=null;renderMP()}
+function mpWk(n){MPS.wk.setDate(MPS.wk.getDate()+7*n);MPS.day=null;renderMP()}
+function mpDay(i){MPS.day=MPS.day===i?null:i;renderMP()}
+function mpTog(s){const S=MPS;if(!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(s))return;
+ if(S.sel.has(s))S.sel.delete(s);else if(S.sel.size>=8){toast('Gehienez 8 aukera','warn');return}else S.sel.add(s);renderMP()}
+function mpSave(){const S=MPS;if(!canEdit||!S.me)return;put('resp/'+rk(S.k,S.me),{k:S.k,t:S.me,s:rsp(S.k,S.me).s||'',p:[...S.sel].sort()});toast('Aukerak gordeta ✓')}
+function mpAns(s){const S=MPS,{k,x,y,me}=S;if(!canEdit||!me)return;const ot=me===x?y:x,e=M[k]||{};
+ put('resp/'+rk(k,me),{k,t:me,s,p:[...S.sel].sort()});
+ if(s==='ok'&&rsp(k,ot).s==='ok'&&e.d)put('matches/'+k,Object.assign(E0(k),{c:true}));
+ if(s!=='ok'&&e.c)put('matches/'+k,Object.assign(E0(k),{c:false}));
+ if(s==='ezin')toast('Gatazka: proposatu beste egun batzuk','warn')}
+function mpPick(s){const S=MPS,{k,x,y,me}=S;if(!canEdit)return;const a=s.split(' '),d=fromIso(a[0]);
+ const str=D3[wdOf(d)]+' '+p2(d.getDate())+'/'+p2(d.getMonth()+1)+' '+a[1];
+ put('matches/'+k,Object.assign(E0(k),{d:str,f:'',c:true}));
+ [x,y].forEach(t=>put('resp/'+rk(k,t),{k,t,s:'ok',p:t===me?[...S.sel].sort():(rsp(k,t).p||[])}));
+ toast('Konfirmatuta: '+str+'. Orain frontoia aukeratu.');closeMP()}
+function sharetxt(t){if(navigator.share)navigator.share({text:t}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>toast('Mezua kopiatu da'));else toast('Ezin izan da kopiatu','warn')}
+function shareMP(){const{k,x,y}=MPS;sharetxt(`🏓 ${nm(x)} vs ${nm(y)}, ${roundOf(k)+1}. jardunaldia: idatzi noiz joka dezakezuen hemen:\n`+location.href.split('#')[0]+'#partida='+k)}
+function shareOrg(){sharetxt(ORGT)}
+function renderMP(){const S=MPS;if(!S)return;const{k,x,y,me}=S,e=M[k]||{},pl=!!res(x,y),el=document.getElementById('mpb');
+ let h=`<div class="sticky top-0 bg-white/95 backdrop-blur border-b border-fr-100 px-6 py-4 flex items-center justify-between gap-3"><div class="min-w-0"><div class="text-[10px] uppercase font-bold text-fr-700">${roundOf(k)+1}. jardunaldia</div><h3 class="font-serif font-bold text-lg text-fr-900 leading-tight">${tn(x)} <span class="text-slate-400 text-sm font-sans">vs</span> ${tn(y)}</h3></div><button onclick="closeMP()" aria-label="Itxi" class="text-slate-400 hover:text-slate-700 text-2xl leading-none px-2">×</button></div><div class="p-6 space-y-5">`;
+ if(!me){el.innerHTML=h+`<div><label class="block text-xs font-bold uppercase tracking-wider text-fr-700 mb-2">Zein bikote zarete?</label><select onchange="setMe(this.value)" class="w-full px-4 py-3 rounded-xl border border-fr-200 text-sm bg-white"><option value="">Aukeratu...</option><option value="${x}">${tn(x)}</option><option value="${y}">${tn(y)}</option></select></div></div>`;return}
+ if(!S.sel)S.sel=new Set(rsp(k,me).p||[]);
+ const ot=me===x?y:x,mine=rsp(k,me),oth=rsp(k,ot),st=stOf(x,y,false,pl,e),dis=canEdit?'':'disabled';
+ const bt=(s,t,c)=>`<button ${dis} onclick="mpAns('${s}')" class="flex-1 py-2.5 rounded-xl text-sm font-semibold border-2 transition ${mine.s===s?c:'border-fr-200 text-fr-800 hover:bg-fr-50'}">${t}</button>`;
+ h+=`<div class="flex items-center justify-between gap-2"><span class="bd ${st[1]}">${st[0]}</span><span class="text-sm text-slate-600 text-right">${e.d?`<b>${esc(e.d)}</b>`:'Data zehaztu gabe'}${e.f?' · '+esc(e.f):''}</span></div>`;
+ if(!pl)h+=`<div><div class="flex gap-2">${e.d?bt('ok','Ondo','bg-fr-700 border-fr-700 text-white')+bt('ezin','Ezin dugu','bg-rose-600 border-rose-600 text-white'):''}${bt('ez','Oraindik ez dakit','bg-amber-500 border-amber-500 text-white')}</div><p class="text-xs text-slate-500 mt-2">${tn(ot)}: ${SL[oth.s]||'ez du erantzun'}</p></div>`;
+ const days=[0,1,2,3,4,5,6].map(i=>{const d=new Date(S.wk);d.setDate(d.getDate()+i);return d});
+ h+=`<div><h4 class="text-xs font-bold uppercase tracking-wider text-fr-700 mb-2">Noiz joka dezakezue? Egun bat baino gehiago aukera ditzakezue</h4><div class="flex items-center gap-1"><button onclick="mpWk(-1)" aria-label="Aurreko astea" class="px-2 text-2xl text-fr-700">‹</button><div class="grid grid-cols-7 gap-1 flex-1">${days.map(d=>{const iso=isoD(d),n=[...S.sel].filter(s=>s.startsWith(iso)).length,iss=slotsOf(d).map(t=>slotIssue(x,y,k,iso,t)),bad=iss.every(Boolean);return `<button ${bad?'disabled':''} title="${esc(bad?iss[0]:'')}" onclick="mpDay('${iso}')" class="rounded-xl py-1.5 text-center text-[11px] border-2 transition ${S.day===iso?'border-fr-700':'border-fr-200'} ${n?'bg-fr-100':''} ${bad?'opacity-40':''}"><div class="font-bold">${D3[wdOf(d)]}</div><div>${d.getDate()}</div><div class="text-fr-700 font-bold h-3">${n?'●'+n:''}</div></button>`}).join('')}</div><button onclick="mpWk(1)" aria-label="Hurrengo astea" class="px-2 text-2xl text-fr-700">›</button></div><p class="text-center text-xs text-slate-500 mt-1">${p2(days[0].getDate())}/${p2(days[0].getMonth()+1)} – ${p2(days[6].getDate())}/${p2(days[6].getMonth()+1)}</p>`;
+ if(S.day){const d=fromIso(S.day);h+=`<div class="mt-3 flex flex-wrap items-center gap-2">${slotsOf(d).map(t=>{const s=S.day+' '+t,iss=slotIssue(x,y,k,S.day,t),on=S.sel.has(s);return `<button ${iss?'disabled':''} title="${esc(iss)}" onclick="mpTog('${s}')" class="inline-block px-3.5 py-1.5 rounded-full border-2 text-sm font-medium ${on?'bg-fr-700 border-fr-700 text-white':'border-fr-200 text-slate-600'} ${iss?'opacity-40':''}">${t}</button>`}).join('')}<input type="time" onchange="if(this.value)mpTog(MPS.day+' '+this.value)" aria-label="Beste ordu bat" class="px-3 py-1.5 rounded-full border-2 border-fr-200 text-sm"></div>`}
+ h+=`<div class="mt-3 flex flex-wrap gap-1.5">${[...S.sel].sort().map(s=>`<button onclick="mpTog('${s}')" class="px-3 py-1 rounded-full bg-fr-100 text-fr-800 text-xs font-semibold">${lbl(s)} ×</button>`).join('')||'<span class="text-xs text-slate-400">Ez duzue aukerarik markatu</span>'}</div><button ${dis} onclick="mpSave()" class="mt-3 bg-fr-700 hover:bg-fr-800 text-white font-semibold px-5 py-2.5 rounded-full text-sm shadow-md shadow-fr-700/20 transition">Gorde aukerak</button></div>`;
+ const op=(oth.p||[]).slice().sort();
+ h+=`<div><h4 class="text-xs font-bold uppercase tracking-wider text-fr-700 mb-1">${tn(ot)}: haien aukerak</h4>${op.length?op.map(s=>{const a=s.split(' '),iss=slotIssue(x,y,k,a[0],a[1]);return `<div class="flex items-center justify-between gap-2 py-2 border-b border-fr-50 text-sm"><span class="font-semibold">${lbl(s)}${S.sel.has(s)?' <span class="text-fr-600 text-xs">· biontzat ondo</span>':''}${iss?`<span class="block text-[11px] text-rose-600 font-normal">${esc(iss)}</span>`:''}</span><button ${iss||!canEdit?'disabled':''} onclick="mpPick('${s}')" class="bg-fr-700 disabled:opacity-40 text-white font-semibold px-4 py-1.5 rounded-full text-xs">Aukeratu</button></div>`}).join(''):'<p class="text-xs text-slate-400 mt-1">Oraindik ez dute aukerarik proposatu.</p>'}</div><button onclick="shareMP()" class="w-full border-2 border-fr-200 hover:bg-fr-50 text-fr-800 font-semibold py-2.5 rounded-xl text-sm transition">Partekatu partida (WhatsApp)</button></div>`;
+ el.innerHTML=h}
+function renderOrg(){const el=document.getElementById('org');if(!el)return;const L=[];
+ rounds().forEach((R,ri)=>R.forEach(([x,y])=>{const k=key(x,y),e=M[k]||{};if(res(x,y)||(e.c&&e.d))return;const A=[x,y].map(t=>rsp(k,t).s);
+  if(A.includes('ezin'))L.push({ri,x,y,g:1,w:[x,y].filter((t,i)=>A[i]==='ezin')});
+  else{const w=[x,y].filter((t,i)=>!A[i]||A[i]==='ez');if(w.length)L.push({ri,x,y,g:0,w})}}));
+ ORGT=L.length?'🏓 Pala Txapelketa: partida hauek zain daude\n'+L.map(m=>`• ${m.ri+1}. jard.: ${nm(m.x)} vs ${nm(m.y)} (${m.g?'gatazka':'erantzun gabe'}: ${m.w.map(nm).join(', ')})`).join('\n')+'\n'+location.href.split('#')[0]:'';
+ const html=L.length?`<details class="card p-4"><summary class="cursor-pointer font-semibold text-fr-800 text-sm">Antolatzailearen panela · ${L.length} partida zain (${L.filter(m=>m.g).length} gatazka)</summary><pre class="text-xs whitespace-pre-wrap mt-3 text-slate-700">${esc(ORGT)}</pre><button onclick="shareOrg()" class="mt-3 border-2 border-fr-200 hover:bg-fr-50 text-fr-800 font-semibold px-5 py-2 rounded-full text-sm transition">Partekatu mezua</button></details>`:'';
+ if(html===ORGH)return;ORGH=html;el.innerHTML=html}
+function openHash(){if(hashDone)return;hashDone=true;const m=location.hash.match(/^#partida=(.+)$/);if(!m)return;
+ const f=rounds().flat().find(([a,b])=>key(a,b)===decodeURIComponent(m[1]));if(f){tab('egutegia');openMatch(f[0],f[1])}}
 buildAv();refresh();tab('hasiera');boot();
 </script>
 <script type="module">
@@ -811,7 +888,7 @@ try{
  window.FB={
   db:{
    collection:p=>mk(collection(fs,p)),
-   doc:p=>{const r=doc(fs,p);return{set:d=>setDoc(r,d),delete:()=>deleteDoc(r),onSnapshot:(n,e)=>onSnapshot(r,s=>n({exists:s.exists(),metadata:s.metadata}),e)}}
+   doc:p=>{const r=doc(fs,p);return{set:d=>setDoc(r,d),delete:()=>deleteDoc(r),onSnapshot:(n,e)=>onSnapshot(r,s=>n({exists:s.exists(),metadata:s.metadata,data:s.exists()?s.data():null}),e)}}
   }
  };
 }catch(e){console.warn(e);window.FB=null}
