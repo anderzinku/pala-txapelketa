@@ -119,6 +119,32 @@ button:not(:disabled):active{filter:brightness(.95)}
 #navmenu button{color:#9fc7b2;border-radius:.9rem;transition:background .2s,color .2s}
 #navmenu button:hover{background:rgba(255,255,255,.08);color:#fff}
 #navmenu button.bg-fr-50{background:rgba(255,255,255,.12);color:#f3d27a}
+
+/* ===== ROUND 7: frosted / floating ===== */
+section h2{font-size:clamp(1.6rem,4.6vw,2.15rem)!important;font-weight:700!important}.court h2{font-size:clamp(2rem,7vw,3.1rem)!important;font-weight:800!important}
+section h3.font-serif:not(.gold){font-size:clamp(1.1rem,3.4vw,1.3rem)!important}
+@media(max-width:640px){section h2{font-weight:600!important}.court h2{font-weight:700!important}.font-serif.font-extrabold{font-weight:700}main{padding-top:1.5rem!important}}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(55% 38% at 92% -8%,rgba(76,184,124,.16),transparent),radial-gradient(45% 32% at -4% 24%,rgba(224,184,74,.09),transparent)}
+.card{border:1px solid transparent;background:linear-gradient(180deg,#eefaf3 0,#fff 44px,#fbfefc);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 0 0 1px rgba(23,98,59,.05),0 2px 6px rgba(6,50,30,.04),0 26px 48px -26px rgba(6,50,30,.3)}
+.card.hv:hover{box-shadow:inset 0 1px 0 #fff,0 0 0 1px rgba(23,98,59,.07),0 4px 10px rgba(6,50,30,.05),0 34px 56px -24px rgba(6,50,30,.4)}
+.hdr{-webkit-backdrop-filter:blur(20px) saturate(1.7);backdrop-filter:blur(20px) saturate(1.7)}
+#navmenu{left:auto!important;right:0!important}#navmenu button+button{margin-top:2px}
+#navmenu button.bg-fr-50::after{content:"";float:right;width:6px;height:6px;margin-top:.55rem;border-radius:50%;background:#f3d27a;box-shadow:0 0 8px #f3d27a}
+@media(max-width:767px){.hdr>div{flex-direction:row!important;padding:.4rem .9rem!important;gap:.5rem}.hdr img{height:2.2rem}.hdr .hsub{display:none}.hdr .font-serif{font-size:.95rem}#navbtn{padding:.5rem .9rem}}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.scin{width:3rem;height:2.7rem;border:0;border-radius:.9rem;background:linear-gradient(180deg,#fff,#eef8f2);box-shadow:inset 0 1px 0 #fff,0 0 0 1px rgba(23,98,59,.12),0 10px 16px -8px rgba(6,50,30,.38)}
+.trow.win .scin{background:linear-gradient(135deg,#1f7a49,#0a2d1b);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 10px 18px -6px rgba(6,50,30,.65)}
+.mh{padding:.5rem .8rem}.mdt{display:flex;align-items:center;gap:.5rem;min-width:0}.mdt b{font-weight:700;font-variant-numeric:tabular-nums;color:#fff;white-space:nowrap}.mdt b.no{font-weight:500;opacity:.6}
+.mdt em{font-style:normal;font-weight:700;padding:.1rem .55rem;border-radius:99px;background:rgba(255,255,255,.12);color:#e8c766;white-space:nowrap}
+.bd::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:.35rem;vertical-align:1px}
+.stw{background:linear-gradient(180deg,#eefaf3,#fff 70px);border-radius:1.5rem;padding:.3rem .9rem .6rem;margin:0;box-shadow:inset 0 1px 0 #fff,0 0 0 1px rgba(23,98,59,.05),0 26px 48px -26px rgba(6,50,30,.3)}
+.stt{border-spacing:0}.stt th{padding:.8rem .6rem;border-bottom:1px solid rgba(23,98,59,.1)}
+.stt td,.stt td:first-child,.stt td:last-child{background:transparent;border:0;border-bottom:1px solid rgba(23,98,59,.07);box-shadow:none;padding:.85rem .6rem}
+.stt td:first-child{border-radius:18px 0 0 18px}.stt td:last-child{border-radius:0 18px 18px 0}
+#std tr.zw td:first-child{box-shadow:inset 4px 0 0 #2f9e5f}#std tr.zl td:first-child{box-shadow:inset 4px 0 0 #e0a82e}
+#std tr:last-child td{border-bottom-color:transparent}#std tr:hover td{background:#f1faf4}
+#std tr.r1 td{background:#fff8e1}#std tr.r1 td:first-child{background:linear-gradient(90deg,#f7e3a0,#fff8e1)}#std tr.r1:hover td{background:#fff2c9}
+@media(max-width:640px){.stw{padding:.2rem .5rem .4rem}.stt td,.stt td:first-child,.stt td:last-child{padding:.7rem .35rem}}
 </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col">
@@ -548,7 +574,7 @@ function renderCal(){
    const pl=r[0]!==''&&r[1]!==''&&+r[0]!==+r[1], w=pl?(+r[0]>+r[1]?0:1):-1, e=M[key(x,y)]||{};
    const row=(id,side,ch)=>`<div class="trow ${w===side?'win':w>=0?'lose':''} ${ch?'ch':''}"><div class="min-w-0 flex-1"><div class="tnm">${tn(id)}${w===side?' <span class="text-emerald-600">✓</span>':''}</div>${ch?'<span class="chip-r">Aukeratzailea</span>':''}</div><input type="number" inputmode="numeric" min="0" max="99" step="1" aria-label="${esc(nm(id))}: tantoak" value="${r[side]}" onchange="setScore('${x}','${y}',${side},this.value)" ${canEdit?'':'disabled'} class="scin tnum"></div>`;
    const st=clashed?['Gatazka','bd-r']:pl?['Jokatua','bd-g']:e.d?['Programatua','bd-b']:['Zain','bd-s'];
-   return `<article class="card hv mc"><div class="mh"><span class="bd ${st[1]}">${st[0]}</span><span class="mdt">${e.d?esc(e.d)+(f?' · '+esc(f):''):'Data zehaztu gabe'}</span></div>
+   return `<article class="card hv mc"><div class="mh"><span class="bd ${st[1]}">${st[0]}</span><span class="mdt">${e.d?`<b>${esc(e.d)}</b>`:'<b class="no">Data zehaztu gabe</b>'}${f?`<em>${esc(f)}</em>`:''}</span></div>
     <div class="p-3 space-y-1.5">${row(x,0,true)}${row(y,1,false)}</div>
     <div class="px-3 pb-3 grid grid-cols-2 gap-2"><select aria-label="Frontoia" ${canEdit?'':'disabled'} onchange="setF('${x}','${y}',this.value)" class="mf"><option value="">Frontoia...</option>${FR.map(o=>`<option ${o===f?'selected':''}>${o}</option>`).join('')}</select>
     <input type="text" aria-label="Data eta ordua" ${canEdit?'':'disabled'} value="${esc(e.d||'')}" placeholder="Lar 12/10 19:00" onchange="setD('${x}','${y}',this.value)" class="mf"></div>
