@@ -241,12 +241,13 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=num
 <section id="t-egutegia" class="hidden space-y-8">
  <div class="fade">
   <h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900">Egutegia</h2><div class="bar mb-3"></div>
-  <p class="text-slate-600">Jardunaldi bakoitzean 3 partida. <span class="font-semibold text-red-700">Gorriz nabarmendutako bikoteak</span> aukeratzen du frontoia. Sartu emaitzak eta sailkapena automatikoki eguneratuko da.</p>
+  <p class="text-slate-600">Data duten partidak egutegian agertzen dira; gainerakoak behean, antolatzeko zain. <span class="font-semibold text-red-700">Gorriz nabarmendutako bikoteak</span> aukeratzen du frontoia.</p>
  </div>
  <div class="flex items-center gap-3"><label for="cf" class="text-xs font-bold uppercase tracking-wider text-fr-700">Bikotea</label><select id="cf" onchange="CF=this.value;renderCal()" class="px-3 py-2 rounded-xl border border-fr-200 text-sm bg-white max-w-[70%]"></select></div>
  <div id="org"></div><div id="aud"></div>
  <div id="nextlist" class="space-y-3"></div>
- <div id="cal" class="space-y-10"></div>
+ <div id="cal" class="space-y-5"></div>
+ <div id="pend" class="pt-6 border-t border-fr-100"></div>
 </section>
 
 <!-- ESKURAGARRITASUNA -->
@@ -624,34 +625,43 @@ function renderCal(){
  const CH=choosers();
  const nl=pendingDated().slice(0,4);
  document.getElementById('nextlist').innerHTML=nl.length?`<div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-fr-700 mb-1">${ic('arr','w-3.5 h-3.5')} Hurrengo partidak datan</div>`+nl.map(m=>`<div class="card p-4 flex flex-wrap items-center justify-between gap-2"><span class="text-sm font-semibold">${tn(m.x)} <span class="text-slate-400 font-normal">vs</span> ${tn(m.y)}</span><span class="text-xs text-slate-500">${esc(m.d)}${m.f?' · '+esc(m.f):''}</span></div>`).join(''):'';
- document.getElementById('cal').innerHTML=rounds().map((R,ri)=>`<div>
-  <h3 class="flex items-center gap-3 text-xl font-serif font-bold text-fr-900 mb-4"><span class="w-9 h-9 rounded-full bg-fr-700 text-white text-sm flex items-center justify-center font-sans">${ri+1}</span>${ri+1}. jardunaldia</h3>
-  <div class="grid md:grid-cols-3 gap-5">${R.filter(m=>!CF||m.includes(CF)).map(([x,y])=>{
-   const r=res(x,y)||['',''], f=(M[key(x,y)]||{}).f||'', clashed=clash(x,y);
-   const pl=r[0]!==''&&r[1]!==''&&+r[0]!==+r[1], w=pl?(+r[0]>+r[1]?0:1):-1, e=M[key(x,y)]||{};
-   const row=(id,side,ch)=>`<div class="trow ${w===side?'win':w>=0?'lose':''} ${ch?'ch':''}"><div class="min-w-0 flex-1"><div class="tnm">${tn(id)}${w===side?' <span class="text-emerald-600">✓</span>':''}</div>${ch?'<span class="chip-r">Aukeratzailea</span>':''}</div><input type="number" inputmode="numeric" min="0" max="99" step="1" aria-label="${esc(nm(id))}: tantoak" value="${r[side]}" onchange="setScore('${x}','${y}',${side},this.value)" ${canEdit?'':'disabled'} class="scin tnum"></div>`;
-   const st=stOf(x,y,clashed,pl,e),k=key(x,y);
-   const manual=`<div class="p-3 space-y-1.5">${row(x,0,x===CH[k])}${row(y,1,y===CH[k])}</div>
-    <div class="px-3 pb-3 grid grid-cols-2 gap-2"><select aria-label="Frontoia" ${canEdit?'':'disabled'} onchange="setF('${x}','${y}',this.value)" class="mf"><option value="">Frontoia...</option>${FR.map(o=>`<option ${o===f?'selected':''} ${e.d&&o!==f&&(useMap[e.d.trim()+'|'+o]||[]).some(kk=>kk!==k)?'disabled':''}>${o}</option>`).join('')}</select>
+
+ const row=(x,y,r,w,id,side,ch)=>`<div class="trow ${w===side?'win':w>=0?'lose':''} ${ch?'ch':''}"><div class="min-w-0 flex-1"><div class="tnm">${tn(id)}${w===side?' <span class="text-emerald-600">✓</span>':''}</div>${ch?'<span class="chip-r">Aukeratzailea</span>':''}</div><input type="number" inputmode="numeric" min="0" max="99" step="1" aria-label="${esc(nm(id))}: tantoak" value="${r[side]}" onchange="setScore('${x}','${y}',${side},this.value)" ${canEdit?'':'disabled'} class="scin tnum"></div>`;
+
+ const dated=[],pend=[];
+ rounds().forEach((R,ri)=>R.forEach(([x,y])=>{if(CF&&x!==CF&&y!==CF)return;
+  const k=key(x,y),e=M[k]||{},r=res(x,y)||['',''],pl=r[0]!==''&&r[1]!==''&&+r[0]!==+r[1];
+  (pl||(e.d&&e.d.trim())?dated:pend).push({ri,x,y,k,e,r,pl});
+ }));
+ dated.sort((a,b)=>{const da=parseD(a.e.d),db=parseD(b.e.d);if(!da&&!db)return 0;if(!da)return 1;if(!db)return -1;return da-db});
+
+ document.getElementById('cal').innerHTML=`<h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-fr-700 mb-3">${ic('pin','w-4 h-4')} Data duten partidak (${dated.length})</h3>`+
+ (dated.length?`<div class="grid md:grid-cols-3 gap-5">${dated.map(({x,y,k,e,r,pl})=>{
+   const f=e.f||'', clashed=clash(x,y), w=pl?(+r[0]>+r[1]?0:1):-1;
+   const st=stOf(x,y,clashed,pl,e);
+   const manual=`<div class="p-3 space-y-1.5">${row(x,y,r,w,x,0,x===CH[k])}${row(x,y,r,w,y,1,y===CH[k])}</div>
+    <div class="px-3 pb-2 grid grid-cols-2 gap-2"><select aria-label="Frontoia" ${canEdit?'':'disabled'} onchange="setF('${x}','${y}',this.value)" class="mf"><option value="">Frontoia...</option>${FR.map(o=>`<option ${o===f?'selected':''} ${e.d&&o!==f&&(useMap[e.d.trim()+'|'+o]||[]).some(kk=>kk!==k)?'disabled':''}>${o}</option>`).join('')}</select>
     <input type="text" aria-label="Data eta ordua" ${canEdit?'':'disabled'} value="${esc(e.d||'')}" placeholder="Lar 12/10 19:00" onchange="setD('${x}','${y}',this.value)" class="mf"></div>`;
-   let body;
-   if(pl){
-    body=manual;
-   }else{
-    const totalProp=(rsp(k,x).p||[]).length+(rsp(k,y).p||[]).length;
-    let cta=['Noiz jokatu dezakegu?','def'];
-    if(e.c&&e.d)cta=['Ikusi partida','def'];
-    else if(ME&&(x===ME||y===ME)){
-     const opp=x===ME?y:x,mine=rsp(k,ME),oth=rsp(k,opp);
-     if((oth.p||[]).length&&mine.s!=='ok')cta=['⚡ Erantzun — proposamen berria','urg'];
-     else if((mine.p||[]).length)cta=['Zain haien erantzuna','wait'];
-    }else if(totalProp)cta=['💬 '+totalProp+' proposamen — ikusi','info'];
-    const ctaCls={def:'border-2 border-fr-200 hover:bg-fr-50 text-fr-800',urg:'bg-rose-600 hover:bg-rose-700 text-white border-2 border-rose-600',wait:'bg-slate-50 text-slate-500 border-2 border-slate-200',info:'bg-fr-50 hover:bg-fr-100 border-2 border-fr-200 text-fr-800'}[cta[1]];
-    body=`<div class="p-3 pb-2"><button onclick="openMatch('${x}','${y}')" class="w-full font-semibold py-2.5 rounded-xl text-sm transition ${ctaCls}">${cta[0]}</button></div>
-    <details class="px-3 pb-3"><summary class="text-[11px] text-slate-400 cursor-pointer select-none hover:text-slate-600">Eskuz aldatu (emaitza, data, frontoia) ▾</summary>${manual}</details>`;
-   }
    return `<article class="card hv mc"><div class="mh"><span class="bd ${st[1]}">${st[0]}</span><span class="mdt">${e.d?`<b>${esc(e.d)}</b>`:'<b class="no">Data zehaztu gabe</b>'}${f?`<em>${esc(f)}</em>`:''}</span></div>
-    ${body}${clashed?'<p class="px-3 pb-3 -mt-1 text-[11px] font-semibold text-rose-600">⚠ Beste partida batek frontoi hau du ordu berean</p>':''}</article>`;}).join('')}</div></div>`).join('');
+    ${manual}${!pl?`<div class="px-3 pb-3"><button onclick="openMatch('${x}','${y}')" class="text-[11px] font-semibold text-fr-700 hover:text-fr-900 underline underline-offset-2">Beste egun bat proposatu</button></div>`:''}${clashed?'<p class="px-3 pb-3 -mt-1 text-[11px] font-semibold text-rose-600">⚠ Beste partida batek frontoi hau du ordu berean</p>':''}</article>`;
+  }).join('')}</div>`:`<p class="text-sm text-slate-400">Oraindik partida bat ere ez du daturik.</p>`);
+
+ const pendByR={};pend.forEach(m=>(pendByR[m.ri]=pendByR[m.ri]||[]).push(m));
+ const pendRounds=Object.keys(pendByR).map(Number).sort((a,b)=>a-b);
+ document.getElementById('pend').innerHTML=!pend.length?'':`<h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-amber-700 mb-1">🗓️ Antolatzeko dauden partidak (${pend.length})</h3>
+  <p class="text-xs text-slate-500 mb-4">Data bat adostu bezain laster, goiko egutegira igoko dira automatikoki.</p>
+  ${pendRounds.map(ri=>`<div class="mb-4"><div class="text-[11px] font-bold text-slate-400 uppercase mb-1.5">${ri+1}. jardunaldia</div><div class="space-y-2">${pendByR[ri].map(({x,y,k,e})=>{
+   const totalProp=(rsp(k,x).p||[]).length+(rsp(k,y).p||[]).length;
+   let cta=['Noiz jokatu dezakegu?','def'];
+   if(ME&&(x===ME||y===ME)){
+    const opp=x===ME?y:x,mine=rsp(k,ME),oth=rsp(k,opp);
+    if((oth.p||[]).length&&mine.s!=='ok')cta=['⚡ Erantzun','urg'];
+    else if((mine.p||[]).length)cta=['Zain haiek','wait'];
+   }else if(totalProp)cta=['💬 '+totalProp,'info'];
+   const ctaCls={def:'border-2 border-fr-200 hover:bg-fr-50 text-fr-800',urg:'bg-rose-600 hover:bg-rose-700 text-white border-2 border-rose-600',wait:'bg-slate-50 text-slate-500 border-2 border-slate-200',info:'bg-fr-50 hover:bg-fr-100 border-2 border-fr-200 text-fr-800'}[cta[1]];
+   const st=stOf(x,y,false,false,e);
+   return `<div class="card p-3.5 flex items-center justify-between gap-3"><div class="min-w-0 flex items-center gap-2"><span class="bd ${st[1]} shrink-0">${st[0]}</span><span class="text-sm font-semibold truncate">${tn(x)} <span class="text-slate-400 font-normal">vs</span> ${tn(y)}</span></div><button onclick="openMatch('${x}','${y}')" class="shrink-0 font-semibold text-xs px-3.5 py-2 rounded-full transition ${ctaCls}">${cta[0]}</button></div>`;
+  }).join('')}</div></div>`).join('')}`;
 }
 // KANPORAKETAK
 function W(id,a,b){
