@@ -171,7 +171,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=num
   </div>
   <div class="relative" id="navwrap">
    <button id="navbtn" aria-haspopup="true" aria-expanded="false" onclick="toggleNav(event)" class="inline-flex items-center gap-2 bg-fr-50 hover:bg-fr-100 border border-fr-200 text-fr-900 font-semibold text-sm px-4 py-2.5 rounded-full transition">
-    <span id="navcur">Hasiera</span>
+    <span id="navcur" class="inline-flex items-center gap-1.5"><span>Hasiera</span></span>
     <svg id="navchev" class="w-4 h-4 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
    </button>
    <div id="navmenu" class="hidden absolute right-0 sm:left-0 mt-2 w-60 bg-white border border-fr-100 rounded-2xl shadow-xl shadow-fr-900/10 overflow-hidden z-50 py-1.5"></div>
@@ -195,6 +195,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=num
    <button onclick="tab('egutegia')" class="inline-flex items-center gap-2 border-2 border-fr-200 hover:border-fr-500 hover:bg-fr-50 text-fr-800 font-semibold px-7 py-3.5 rounded-full transition hover:-translate-y-0.5">Egutegia</button>
   </div>
  </div>
+ <div id="seasonbar"></div>
  <div id="minew" class="space-y-3"></div>
  <div id="stats" class="grid grid-cols-1 sm:grid-cols-3 gap-5"></div>
  <div id="nextw"></div>
@@ -203,7 +204,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=num
 <!-- SAILKAPENA -->
 <section id="t-sailkapena" class="hidden space-y-12">
  <div class="fade">
-  <h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900">Sailkapena</h2><div class="bar mb-3"></div>
+  <h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900"><svg class="w-7 h-7 inline-block align-middle -mt-1 mr-2 text-fr-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg>Sailkapena</h2><div class="bar mb-3"></div>
   <p class="text-slate-600 mb-6">Garaipen bakoitzak puntu 1 ematen du; porrotak ez du punturik gehitzen.</p>
   <div id="podium"></div>
   <div class="stw">
@@ -240,7 +241,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=num
 <!-- EGUTEGIA -->
 <section id="t-egutegia" class="hidden space-y-8">
  <div class="fade">
-  <h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900">Egutegia</h2><div class="bar mb-3"></div>
+  <h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900"><svg class="w-7 h-7 inline-block align-middle -mt-1 mr-2 text-fr-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Egutegia</h2><div class="bar mb-3"></div>
   <p class="text-slate-600">Data duten partidak egutegian agertzen dira; gainerakoak behean, antolatzeko zain. <span class="font-semibold text-red-700">Gorriz nabarmendutako bikoteak</span> aukeratzen du frontoia.</p>
  </div>
  <div class="flex items-center gap-3"><label for="cf" class="text-xs font-bold uppercase tracking-wider text-fr-700">Bikotea</label><select id="cf" onchange="CF=this.value;renderCal()" class="px-3 py-2 rounded-xl border border-fr-200 text-sm bg-white max-w-[70%]"></select></div>
@@ -253,7 +254,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=num
 <!-- ESKURAGARRITASUNA -->
 <section id="t-eskuragarritasuna" class="hidden space-y-8">
  <div class="fade">
-  <h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900">Proposamenak</h2><div class="bar mb-3"></div>
+  <h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900"><svg class="w-7 h-7 inline-block align-middle -mt-1 mr-2 text-fr-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.38 8.5 8.5 0 0 1-4-1l-4.5 1 1.3-4A8.38 8.38 0 0 1 4 11.5a8.5 8.5 0 0 1 17 0Z"/></svg>Proposamenak</h2><div class="bar mb-3"></div>
   <p class="text-slate-600">Hemen egiten dira zuen partiden proposamenak. Bikote bakoitzak bere egunak proposatzen ditu, eta biek egun bera aukeratzen dutenean partida <b class="text-fr-800">konfirmatuta</b> igoko da Egutegira, orduarekin eta frontoiarekin. Horrela, partidak jokatu ahala, egutegia bakarrik osatuz joango da.</p>
  </div>
  <div id="propsel" class="card p-5"></div>
@@ -263,7 +264,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=num
 <!-- KANPORAKETAK -->
 <section id="t-playoffs" class="hidden space-y-8">
  <div class="fade">
-  <h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900">Kanporaketak</h2><div class="bar mb-3"></div>
+  <h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900"><svg class="w-7 h-7 inline-block align-middle -mt-1 mr-2 text-fr-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5v4h6M4 15v4h6M10 7h4a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h2M10 17h8"/></svg>Kanporaketak</h2><div class="bar mb-3"></div>
   <p class="text-slate-600">6 bikoteak sartzen dira: lehen 4 sailkatuek irabazleen koadroan hasten dute eta 5.ak eta 6.ak galtzaileen koadroan. Irabazleen koadroan galtzen duenak bigarren aukera bat du; galtzaileen koadroan galtzen duena kanporatua da.</p>
  </div>
  <div class="card p-5 overflow-x-auto">
@@ -284,7 +285,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=num
 <!-- TXAPELDUNAK -->
 <section id="t-txapeldunak" class="hidden space-y-8">
  <div class="fade">
-  <h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900">Txapeldunak</h2><div class="bar mb-3"></div>
+  <h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900"><svg class="w-7 h-7 inline-block align-middle -mt-1 mr-2 text-fr-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>Txapeldunak</h2><div class="bar mb-3"></div>
   <p class="text-slate-600">Pala Txapelketaren ohorezko taldea: txapela altxatu duten bikote guztiak. Zure izena hemen egon daiteke!</p>
  </div>
  <div id="chc"></div>
@@ -308,7 +309,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=num
 
 <!-- ARAUTEGIA -->
 <section id="t-arautegia" class="hidden space-y-8">
- <div class="fade"><h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900">Arautegia</h2><div class="bar"></div></div>
+ <div class="fade"><h2 class="text-3xl sm:text-4xl font-serif font-bold text-fr-900"><svg class="w-7 h-7 inline-block align-middle -mt-1 mr-2 text-fr-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>Arautegia</h2><div class="bar"></div></div>
  <div id="rules" class="grid md:grid-cols-2 gap-5"></div>
 </section>
 </main>
@@ -406,18 +407,24 @@ const IC={
  ok:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
  cup:'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
  pin:'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
- arr:'<path d="M5 12h14M13 6l6 6-6 6"/>'
+ arr:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+home:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/>',
+list:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/>',
+cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/>',
+chat:'<path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.38 8.5 8.5 0 0 1-4-1l-4.5 1 1.3-4A8.38 8.38 0 0 1 4 11.5a8.5 8.5 0 0 1 17 0Z"/>',
+bracket:'<path d="M4 5v4h6M4 15v4h6M10 7h4a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h2M10 17h8"/>',
+book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>'
 };
 const ic=(n,c='w-5 h-5')=>`<svg class="${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
-const TABS=[['hasiera','Hasiera'],['sailkapena','Sailkapena'],['egutegia','Egutegia'],['eskuragarritasuna','Disponibilitatea'],['playoffs','Kanporaketak'],['txapeldunak','Txapeldunak'],['arautegia','Arautegia']];
+const TABS=[['hasiera','Hasiera','home'],['sailkapena','Sailkapena','list'],['egutegia','Egutegia','cal'],['eskuragarritasuna','Proposamenak','chat'],['playoffs','Kanporaketak','bracket'],['txapeldunak','Txapeldunak','cup'],['arautegia','Arautegia','book']];
 
 function tab(id){
  TABS.forEach(([k])=>document.getElementById('t-'+k).classList.toggle('hidden',k!==id));
  const sec=document.getElementById('t-'+id);
  stagger(sec);pb('start');setTimeout(()=>pb('end'),380);
  const cur=TABS.find(([k])=>k===id);
- document.getElementById('navcur').textContent=cur?cur[1]:'';
- document.getElementById('navmenu').innerHTML=TABS.map(([k,n])=>`<button onclick="tab('${k}')" class="w-full text-left px-4 py-2.5 text-sm font-semibold transition ${k===id?'bg-fr-50 text-fr-800':'text-slate-700 hover:bg-fr-50'}">${n}</button>`).join('');
+ document.getElementById('navcur').innerHTML=cur?ic(cur[2],'w-4 h-4')+'<span>'+cur[1]+'</span>':'';
+ document.getElementById('navmenu').innerHTML=TABS.map(([k,n,i])=>`<button onclick="tab('${k}')" class="w-full flex items-center gap-2.5 text-left px-4 py-2.5 text-sm font-semibold transition ${k===id?'bg-fr-50 text-fr-800':'text-slate-700 hover:bg-fr-50'}">${ic(i,'w-4 h-4 text-fr-600 shrink-0')}<span>${n}</span></button>`).join('');
  closeNav();
  window.scrollTo(0,0);
 }
@@ -472,7 +479,7 @@ function renderProps(){
  if(!ME){w.innerHTML=`<div class="card p-8 text-center text-slate-500 text-sm">Hautatu zuen bikotea goian, zuen partidak eta proposamenak ikusteko.</div>`;return}
  const L=myMatches(),CH=choosers();
  if(!L.length){w.innerHTML=`<div class="card p-6 text-sm text-slate-500">Ez duzue proposatzeko partidarik, ${tn(ME)}. 👏</div>`;return}
- w.innerHTML=L.map(m=>{
+ w.innerHTML='<div class="grid sm:grid-cols-2 gap-4">'+L.map(m=>{
   const k=key(m.x,m.y),e=M[k]||{},mine=rsp(k,ME),oth=rsp(k,m.opp);
   const chips=(oth.p||[]).map(s=>`<span class="inline-block text-[11px] font-medium bg-amber-50 text-amber-800 px-2.5 py-1 rounded-full mr-1 mb-1">${esc(tn(m.opp))}: ${esc(fmtSlot(s))}</span>`).join('')
    +(mine.p||[]).map(s=>`<span class="inline-block text-[11px] font-medium bg-fr-50 text-fr-800 px-2.5 py-1 rounded-full mr-1 mb-1">Zuk: ${esc(fmtSlot(s))}</span>`).join('');
@@ -485,7 +492,7 @@ function renderProps(){
    ${frontonBlock}
    <button onclick="openMatch('${m.x}','${m.y}')" class="mt-3 w-full font-semibold py-2.5 rounded-xl text-sm transition ${m.urgent?'bg-rose-600 hover:bg-rose-700 text-white':'border-2 border-fr-200 hover:bg-fr-50 text-fr-800'}">${m.urgent?'Erantzun':(chips?'Proposatu beste egun bat':'Proposatu eguna')}</button>
   </div>`;
- }).join('');
+ }).join('')+'</div>';
 }
 function toggleNav(e){e.stopPropagation();setTimeout(()=>document.getElementById('navbtn').setAttribute('aria-expanded',String(!document.getElementById('navmenu').classList.contains('hidden'))),0);const m=document.getElementById('navmenu'),h=m.classList.toggle('hidden');document.getElementById('navchev').style.transform=h?'':'rotate(180deg)'}
 function closeNav(){document.getElementById('navmenu').classList.add('hidden');document.getElementById('navbtn').setAttribute('aria-expanded','false');document.getElementById('navchev').style.transform=''}
@@ -616,6 +623,8 @@ function renderStd(){
  const q=teamFilter.trim().toLowerCase();
  document.getElementById('tl').innerHTML=teams.filter(t=>t.name.toLowerCase().includes(q)).map(t=>`<tr><td class="py-3"><button onclick="openProfile('${t.id}')" class="font-semibold text-slate-900 hover:text-fr-700 underline decoration-fr-200 underline-offset-4 transition text-left">${esc(t.name)}</button></td><td class="py-3 text-right"><button ${canEdit?'':'hidden'} onclick="rmTeam('${t.id}')" aria-label="Ezabatu: ${esc(t.name)}" class="text-rose-600 hover:bg-rose-100 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-full transition">Ezabatu</button></td></tr>`).join('')||'<tr><td class="py-6 text-center text-sm text-slate-400">Ez da bikoterik aurkitu.</td></tr>';
  const all=rounds().flat(), played=all.filter(([x,y])=>{const r=res(x,y);return r&&r[0]!==r[1]}).length;
+ const pct=all.length?Math.round(played/all.length*100):0, sb=document.getElementById('seasonbar');
+ if(sb)sb.innerHTML=`<div class="card p-4"><div class="flex items-center justify-between text-xs font-bold text-fr-700 mb-1.5"><span>Denboraldiaren martxa</span><span>${played}/${all.length} partida (%${pct})</span></div><div class="h-2.5 rounded-full bg-fr-50 overflow-hidden"><div class="h-full bg-gradient-to-r from-fr-500 to-fr-700 rounded-full transition-all duration-700" style="width:${pct}%"></div></div></div>`;
  const lead=T[0]&&T[0].j?tn(T[0].id):'—';
  document.getElementById('stats').innerHTML=[['users','Bikoteak',teams.length],['ok','Jokatutako partidak',played+' / '+all.length],['cup','Liderra',lead]]
   .map(([i,a,b])=>`<div class="card hv p-6 flex items-center gap-4"><div class="w-12 h-12 shrink-0 rounded-2xl bg-fr-100 text-fr-700 flex items-center justify-center">${ic(i,'w-6 h-6')}</div><div class="min-w-0"><div class="text-xs uppercase tracking-wider text-slate-500 font-bold">${a}</div><div class="text-xl font-serif font-bold text-fr-900 truncate">${b}</div></div></div>`).join('');
