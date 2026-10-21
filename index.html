@@ -402,6 +402,167 @@ section[id^="t-"]{min-width:0}
 #lastmatch article{box-shadow:0 14px 34px -26px rgba(8,45,27,.42)}
 #lastmatch article>div:first-child{border-bottom:1px solid rgba(223,189,94,.28)}
 
+
+/* =========================================================
+   BERRANTOLAKETA BISUALA — TXAPELDUNAK / EGUTEGIA / SAILKAPENA
+   CSS bakarrik: ez ditu datuak, IDak, gertaerak edo JS logika aldatzen.
+   ========================================================= */
+:root{
+ --ui-ink:#14271e;--ui-muted:#637267;--ui-line:#e2eae3;--ui-paper:#fff;
+ --ui-green:#124d2f;--ui-green-2:#1f7a49;--ui-soft:#f4f8f4;
+ --ui-gold:#c58a19;--ui-gold-soft:#fff8e8;--ui-shadow:0 12px 34px -24px rgba(13,58,36,.30);
+}
+#main{max-width:1180px;padding-top:clamp(1.5rem,3vw,3rem)}
+#t-sailkapena,#t-egutegia,#t-txapeldunak{color:var(--ui-ink)}
+#t-sailkapena>div:first-child,#t-egutegia>div:first-child,#t-txapeldunak>div:first-child{margin-bottom:1.6rem}
+#t-sailkapena h2,#t-egutegia h2,#t-txapeldunak h2{letter-spacing:-.035em;line-height:1.08}
+#t-sailkapena .bar,#t-egutegia .bar,#t-txapeldunak .bar{height:4px;width:4.25rem;margin-top:.85rem;margin-bottom:1rem;border-radius:999px}
+#t-sailkapena p.text-slate-600,#t-egutegia p.text-slate-600,#t-txapeldunak p.text-slate-600{color:var(--ui-muted);line-height:1.75;max-width:760px}
+#t-sailkapena .card,#t-egutegia .card,#t-txapeldunak .card{border:1px solid var(--ui-line);border-radius:1.15rem;box-shadow:var(--ui-shadow)}
+#t-sailkapena .card.hv:hover,#t-egutegia .card.hv:hover,#t-txapeldunak .card.hv:hover{transform:translateY(-2px);box-shadow:0 18px 38px -25px rgba(13,58,36,.4)}
+#t-sailkapena button:focus-visible,#t-egutegia button:focus-visible,#t-txapeldunak button:focus-visible,#t-sailkapena input:focus-visible,#t-egutegia input:focus-visible,#t-egutegia select:focus-visible,#t-txapeldunak input:focus-visible{outline:3px solid #8bc7a0;outline-offset:3px}
+
+/* SAILKAPENA: podiuma, taula eta partaideen kudeaketa */
+#t-sailkapena{gap:3.25rem}
+#t-sailkapena .pds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem;align-items:end;margin:1.75rem 0 2rem}
+#t-sailkapena .pd{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.45rem;min-width:0;padding:1.25rem .85rem 1.1rem;border:1px solid var(--ui-line);border-radius:1.15rem;background:linear-gradient(180deg,#fff,#f7faf7);color:var(--ui-ink);box-shadow:0 10px 25px -22px rgba(13,58,36,.5);transition:transform .18s,border-color .18s}
+#t-sailkapena .pd:hover{transform:translateY(-3px);border-color:#b7d7c0}
+#t-sailkapena .pd.p1{min-height:175px;background:linear-gradient(160deg,#fff9e8,#fff 75%);border-color:#ecd39a;box-shadow:0 15px 35px -25px rgba(197,138,25,.55)}
+#t-sailkapena .pd.p2,#t-sailkapena .pd.p3{min-height:145px}
+#t-sailkapena .pd svg{width:2.45rem;height:2.45rem}
+#t-sailkapena .pdn{width:100%;font-size:clamp(.78rem,1.2vw,.96rem);font-weight:800;line-height:1.35;overflow-wrap:anywhere}
+#t-sailkapena .pdp{font-size:1.2rem;font-weight:800;color:var(--ui-green)}
+#t-sailkapena .pdp small{font-size:.68rem;font-weight:700;color:var(--ui-muted)}
+#t-sailkapena .stw{overflow-x:auto;border:1px solid var(--ui-line);border-radius:1.15rem;background:white;box-shadow:var(--ui-shadow);-webkit-overflow-scrolling:touch}
+#t-sailkapena .stt{width:100%;border-collapse:separate;border-spacing:0;font-size:.88rem;white-space:nowrap}
+#t-sailkapena .stt thead{background:#f3f7f3}
+#t-sailkapena .stt th{padding:1rem .85rem;color:#5b6e60;text-transform:uppercase;letter-spacing:.075em;font-size:.67rem;font-weight:800;border-bottom:1px solid var(--ui-line);text-align:center}
+#t-sailkapena .stt th:nth-child(2){text-align:left;min-width:190px}
+#t-sailkapena .stt td{padding:.9rem .85rem;text-align:center;border-bottom:1px solid #edf2ed;font-variant-numeric:tabular-nums}
+#t-sailkapena .stt tbody tr:last-child td{border-bottom:0}
+#t-sailkapena .stt tbody tr{transition:background .15s}
+#t-sailkapena .stt tbody tr:hover{background:#f8fbf8}
+#t-sailkapena .stt tbody tr.zw{background:linear-gradient(90deg,rgba(31,122,73,.045),transparent 45%)}
+#t-sailkapena .stt tbody tr.r1{background:linear-gradient(90deg,rgba(245,190,65,.14),rgba(255,255,255,0) 65%)}
+#t-sailkapena .stt td.nm{text-align:left;white-space:normal;min-width:190px}
+#t-sailkapena .stt td.nm button{font-weight:800;color:#173e29;text-align:left;line-height:1.4;text-decoration-thickness:1px;text-underline-offset:3px}
+#t-sailkapena .pn{display:inline-grid;place-items:center;min-width:1.8rem;height:1.8rem;padding:0 .3rem;border-radius:.6rem;background:#f0f4f0;color:#536457;font-weight:800;font-size:.78rem}
+#t-sailkapena .pts{display:inline-flex;align-items:center;justify-content:center;min-width:2.5rem;padding:.4rem .6rem;border-radius:.65rem;background:#e9f5ec;color:#14532d;font-weight:900}
+#t-sailkapena .gw{color:#177344;font-weight:800}
+#t-sailkapena .df{font-weight:800}
+#t-sailkapena .df.up{color:#16804a}#t-sailkapena .df.dn{color:#c2414b}
+#t-sailkapena .fd{display:inline-block;width:.45rem;height:.45rem;border-radius:50%;background:#d9e2da;margin:0 .08rem}
+#t-sailkapena .fd.w{background:#29935a}#t-sailkapena .fd.l{background:#e16c73}
+#t-sailkapena #tlw{min-width:0}
+#t-sailkapena #tlw table{border-collapse:collapse}
+#t-sailkapena #tlw tr{border-bottom:1px solid #edf2ed}
+#t-sailkapena #tlw tr:last-child{border-bottom:0}
+#t-sailkapena #tlw td{padding:.85rem .25rem}
+#t-sailkapena #addf{border-radius:1.15rem;background:linear-gradient(145deg,#f4f8f4,#fff 75%)}
+#t-sailkapena input,#t-egutegia input,#t-egutegia select,#t-txapeldunak input{border-color:#d8e4da;background-color:#fff;transition:border-color .15s,box-shadow .15s}
+#t-sailkapena input:focus,#t-egutegia input:focus,#t-egutegia select:focus,#t-txapeldunak input:focus{border-color:#4c9b69;box-shadow:0 0 0 3px rgba(76,155,105,.12);outline:none}
+
+/* EGUTEGIA: iragazkia, hurrengo partidak eta partida-txartelak */
+#t-egutegia #cf{min-height:2.8rem;min-width:min(17rem,70vw);border-radius:.8rem;background-color:white;font-weight:650;color:#23442f}
+#t-egutegia>div:nth-of-type(2){padding:.85rem 1rem;border:1px solid var(--ui-line);border-radius:1rem;background:#f7faf7;width:fit-content;max-width:100%;flex-wrap:wrap}
+#t-egutegia #nextlist>div:first-child,#t-egutegia #cal>h3,#t-egutegia #pend>h3{letter-spacing:.09em;font-size:.7rem}
+#t-egutegia #nextlist .card{padding:1rem 1.15rem;gap:1rem;border-radius:.95rem}
+#t-egutegia #nextlist .card>span:first-child{font-size:.9rem;color:#1d3c29}
+#t-egutegia #nextlist .card>span:last-child{padding:.35rem .6rem;border-radius:.55rem;background:#f2f6f2;color:#53685a;font-weight:650}
+#t-egutegia #cal>div.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+#t-egutegia .mc{overflow:hidden;border-radius:1.1rem;box-shadow:0 12px 30px -25px rgba(13,58,36,.45)}
+#t-egutegia .mc .mh{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;padding:1rem 1rem .9rem;background:linear-gradient(135deg,#f6faf6,#fff);border-bottom:1px solid #e8efe8}
+#t-egutegia .mc .mdt{display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;text-align:right;color:#304d39;font-size:.75rem;line-height:1.45}
+#t-egutegia .mc .mdt b{font-weight:800}
+#t-egutegia .mc .mdt em{font-style:normal;font-size:.68rem;color:#63776a;background:#eaf2eb;padding:.22rem .5rem;border-radius:.45rem}
+#t-egutegia .bd{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:.32rem .62rem;font-size:.64rem;font-weight:850;line-height:1.3;white-space:nowrap}
+#t-egutegia .bd-g{background:#e4f5e9;color:#17643b}
+#t-egutegia .bd-r{background:#fff0f0;color:#b42332}
+#t-egutegia .bd-k{background:#e9f3ff;color:#1e5c94}
+#t-egutegia .bd-b{background:#eaf1ff;color:#3659a8}
+#t-egutegia .bd-s{background:#f0f3f0;color:#617064}
+#t-egutegia .trow{display:flex;align-items:center;gap:.65rem;min-height:3.15rem;padding:.6rem .7rem;border:1px solid #e8eee8;border-radius:.7rem;background:#fff;transition:border-color .15s,background .15s}
+#t-egutegia .trow+.trow{margin-top:.5rem}
+#t-egutegia .trow.win{border-color:#b8dfc3;background:#f0faf3}
+#t-egutegia .trow.lose{background:#fbfcfb}
+#t-egutegia .trow.ch{border-color:#e6b2b2;background:#fff6f6}
+#t-egutegia .tnm{font-size:.8rem;font-weight:750;line-height:1.4;color:#233f2d;overflow-wrap:anywhere}
+#t-egutegia .chip-r{display:inline-block;margin-top:.22rem;padding:.13rem .4rem;border-radius:.35rem;background:#fee2e2;color:#a61b2b;font-size:.57rem;font-weight:850;text-transform:uppercase;letter-spacing:.04em}
+#t-egutegia .scin{width:3.2rem;height:2.45rem;border-radius:.6rem;border:1px solid #d8e4da;text-align:center;font-size:1rem;font-weight:850;color:#173e29;background:white}
+#t-egutegia .mf{min-width:0;width:100%;padding:.65rem .7rem;border:1px solid #dce7dd;border-radius:.65rem;background:#fff;font-size:.75rem;color:#314d39}
+#t-egutegia .mc>div.p-3.space-y-1\.5{padding:.85rem}
+#t-egutegia .mc button{text-underline-offset:3px}
+#t-egutegia #pend{margin-top:2rem;border-color:#e3ebe3}
+#t-egutegia #pend .card{border-radius:.85rem}
+#t-egutegia #pend .card>div:first-child{gap:.6rem}
+#t-egutegia #aud .card{background:#fffbeb;border-color:#f2d38c}
+
+/* TXAPELDUNAK: garaipen nagusia, podiuma eta historia */
+#t-txapeldunak #chc{margin-bottom:.5rem}
+#t-txapeldunak #chc .card{background:#fffaf0;border-color:#f1d59a;box-shadow:none}
+#t-txapeldunak #chl{gap:2rem}
+#t-txapeldunak #chl>div:first-child:not(.card){margin-bottom:.25rem}
+#t-txapeldunak #chl .relative.overflow-hidden.rounded-\[2rem\]{position:relative;border:1px solid rgba(222,184,89,.42);border-radius:1.6rem;box-shadow:0 24px 55px -35px rgba(13,58,36,.7)}
+#t-txapeldunak #chl .relative.overflow-hidden.rounded-\[2rem\] h3{max-width:950px;margin-left:auto;margin-right:auto;overflow-wrap:anywhere}
+#t-txapeldunak #chl .relative.overflow-hidden.rounded-\[2rem\] .gold{background:linear-gradient(100deg,#f7d77a 0%,#fff0b8 28%,#e7b94f 54%,#fff0b8 78%,#f7d77a 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+#t-txapeldunak #chl>div>h3{font-size:1.1rem;letter-spacing:-.02em;margin-bottom:1rem}
+#t-txapeldunak #chl .goldcard{border-color:#ead29a;background:linear-gradient(160deg,#fff9e9,#fff 75%)}
+#t-txapeldunak #chl .grid.sm\:grid-cols-3>div{min-height:155px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#t-txapeldunak #chl .grid.sm\:grid-cols-3>div>div:nth-child(2){max-width:100%;overflow-wrap:anywhere;line-height:1.35}
+#t-txapeldunak #chl .grid.sm\:grid-cols-3>div>div:last-child{display:inline-flex;align-items:center;justify-content:center;padding:.35rem .65rem;border-radius:999px;background:#fff5d9}
+#t-txapeldunak #chl .grid.sm\:grid-cols-2>div,#t-txapeldunak #chl .grid.lg\:grid-cols-3>div{border-top:3px solid #d7a63e!important;transition:transform .18s,box-shadow .18s}
+#t-txapeldunak #chl .grid.sm\:grid-cols-2>div:hover,#t-txapeldunak #chl .grid.lg\:grid-cols-3>div:hover{transform:translateY(-2px)}
+#t-txapeldunak details.card{overflow:hidden;padding:0;border-radius:1.1rem}
+#t-txapeldunak details.card summary{padding:1.2rem 1.4rem;background:#f7faf7;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+#t-txapeldunak details.card summary::-webkit-details-marker{display:none}
+#t-txapeldunak details.card summary::after{content:'+';display:grid;place-items:center;width:1.8rem;height:1.8rem;border-radius:.55rem;background:#e3f1e6;color:#185d37;font-size:1.2rem;font-weight:700}
+#t-txapeldunak details.card[open] summary::after{content:'−'}
+#t-txapeldunak details.card>div{padding:1.25rem 1.4rem 1.5rem}
+#t-txapeldunak .court{border-color:#dbe9dc;background:repeating-linear-gradient(90deg,transparent 0 95px,rgba(31,122,73,.035) 95px 97px),linear-gradient(180deg,#fff 35%,#f4faf5);box-shadow:var(--ui-shadow)}
+#t-txapeldunak .court h3{letter-spacing:-.025em}
+
+@media(min-width:900px){
+ #t-sailkapena .stt th,#t-sailkapena .stt td{padding-left:1rem;padding-right:1rem}
+ #t-txapeldunak #chl .relative.overflow-hidden.rounded-\[2rem\]{padding-top:4.25rem!important;padding-bottom:4.25rem!important}
+}
+@media(max-width:767px){
+ #main{padding-left:1rem;padding-right:1rem}
+ #t-sailkapena,#t-egutegia,#t-txapeldunak{gap:2rem}
+ #t-sailkapena .pds{gap:.45rem;margin:1.25rem 0 1.5rem}
+ #t-sailkapena .pd{padding:.9rem .4rem;border-radius:.85rem}
+ #t-sailkapena .pd.p1{min-height:145px}#t-sailkapena .pd.p2,#t-sailkapena .pd.p3{min-height:120px}
+ #t-sailkapena .pd svg{width:2rem;height:2rem}
+ #t-sailkapena .pdn{font-size:.72rem}
+ #t-sailkapena .pdp{font-size:1rem}
+ #t-sailkapena .stt{font-size:.78rem}
+ #t-sailkapena .stt th{padding:.8rem .55rem;font-size:.6rem}
+ #t-sailkapena .stt td{padding:.75rem .55rem}
+ #t-sailkapena .stt td.nm{min-width:145px}
+ #t-egutegia #cal>div.grid{grid-template-columns:minmax(0,1fr);gap:.85rem}
+ #t-egutegia>div:nth-of-type(2){width:100%;align-items:center}
+ #t-egutegia #cf{flex:1;min-width:0;max-width:100%}
+ #t-egutegia .mc .mh{padding:.85rem}
+ #t-egutegia .mc .mdt{font-size:.7rem}
+ #t-egutegia .scin{width:3rem}
+ #t-egutegia #nextlist .card{align-items:flex-start}
+ #t-egutegia #nextlist .card>span:last-child{font-size:.68rem}
+ #t-txapeldunak #chl .relative.overflow-hidden.rounded-\[2rem\]{padding:2.25rem 1.15rem!important;border-radius:1.25rem}
+ #t-txapeldunak #chl .relative.overflow-hidden.rounded-\[2rem\] h3{font-size:clamp(1.75rem,8vw,2.7rem);line-height:1.12}
+ #t-txapeldunak #chl .grid.sm\:grid-cols-3>div{min-height:130px;padding:1rem .8rem}
+ #t-txapeldunak details.card>div{padding:1rem}
+ #t-txapeldunak .court{padding:2rem 1rem 2.5rem!important}
+}
+@media(max-width:380px){
+ #t-sailkapena .pdn{font-size:.65rem}
+ #t-sailkapena .pd svg{width:1.7rem;height:1.7rem}
+ #t-egutegia .mc .mh{flex-direction:column;align-items:flex-start}
+ #t-egutegia .mc .mdt{align-items:flex-start;text-align:left}
+}
+@media(prefers-reduced-motion:reduce){
+ #t-sailkapena .pd,#t-sailkapena .card,#t-egutegia .card,#t-txapeldunak .card{transition:none}
+ #t-txapeldunak #chl .gold{animation:none}
+}
+
 </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col">
