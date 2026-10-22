@@ -634,6 +634,25 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:none!importan
 #t-egutegia .event-save:hover:not(:disabled){background:#1f7a49}
 #t-egutegia .event-save:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:520px){#t-egutegia .event-save{flex:1 1 100%;margin-left:0}}
+
+/* ===== Sailkapena móvil: todas las columnas (J G G TA TK Dif Forma Pts) ===== */
+@media(max-width:767px){
+ #t-sailkapena .stt{font-size:.74rem}
+ #t-sailkapena .stt th{padding:.65rem .12rem;font-size:.56rem;letter-spacing:0}
+ #t-sailkapena .stt td,#t-sailkapena .stt td:first-child,#t-sailkapena .stt td:last-child{padding:.6rem .12rem}
+ #t-sailkapena .stt th:nth-child(2),#t-sailkapena .stt td.nm{min-width:5.2rem;max-width:7.2rem;padding-left:.3rem;padding-right:.15rem}
+ #t-sailkapena .stt td.nm button{font-size:.74rem;line-height:1.25}
+ #t-sailkapena .pn{min-width:1.4rem;height:1.4rem;font-size:.66rem;border-radius:.45rem}
+ #t-sailkapena .pts{min-width:1.8rem;padding:.28rem .3rem;font-size:.76rem}
+ #t-sailkapena .fd{width:.34rem;height:.34rem;margin:0 .035rem}
+ #t-sailkapena .fdw{display:inline-flex;white-space:nowrap}
+ #t-sailkapena .stw{overflow-x:auto;padding-left:.15rem;padding-right:.15rem}
+}
+@media(max-width:380px){
+ #t-sailkapena .stt th:nth-child(2),#t-sailkapena .stt td.nm{min-width:4.2rem;max-width:5.4rem}
+ #t-sailkapena .stt td.nm button{font-size:.7rem}
+ #t-sailkapena .stt{font-size:.7rem}
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 </head>
@@ -702,7 +721,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:none!importan
    <table class="stt"><caption class="sr-only">Sailkapena</caption>
     <thead><tr>
      <th scope="col">Pos</th><th scope="col">Bikotea</th><th scope="col" title="Jokatuak">J</th><th scope="col" title="Irabaziak">G</th><th scope="col" title="Galduak">Gal</th>
-     <th scope="col" class="hidden sm:table-cell" title="Tantoak alde">TA</th><th scope="col" class="hidden sm:table-cell" title="Tantoak kontra">TK</th><th scope="col" title="Tanto diferentzia">Dif</th><th scope="col" class="hidden md:table-cell">Forma</th><th scope="col">Puntuak</th>
+     <th scope="col" title="Tantoak alde">TA</th><th scope="col" title="Tantoak kontra">TK</th><th scope="col" title="Tanto diferentzia">Dif</th><th scope="col">Forma</th><th scope="col">Puntuak</th>
     </tr></thead>
     <tbody id="std"></tbody>
    </table>
@@ -1121,9 +1140,9 @@ function renderStd(){
   <td>${i<3&&r.j?crown(i):`<span class="pn">${i+1}</span>`}</td>
   <td class="nm"><button onclick="openProfile('${r.id}')">${tn(r.id)}</button></td>
   <td class="tnum">${r.j}</td><td class="tnum gw">${r.g}</td><td class="tnum">${r.l}</td>
-  <td class="tnum hidden sm:table-cell">${r.f}</td><td class="tnum hidden sm:table-cell">${r.c}</td>
+  <td class="tnum">${r.f}</td><td class="tnum">${r.c}</td>
   <td><span class="df tnum ${d>0?'up':d<0?'dn':''}">${d>0?'+':''}${d}</span></td>
-  <td class="hidden md:table-cell"><span class="fdw" aria-label="Azken emaitzak">${dots}</span></td>
+  <td><span class="fdw" aria-label="Azken emaitzak">${dots}</span></td>
   <td><span class="pts tnum" data-pts="${r.id}">${r.p}</span></td></tr>`}).join('');
  const pc=(r,i)=>`<button onclick="openProfile('${r.id}')" class="pd p${i+1}">${crown(i)}<span class="pdn">${tn(r.id)}</span><span class="pdp tnum">${r.p}<small> pt</small></span></button>`;
  document.getElementById('podium').innerHTML=T[0]&&T[0].j&&T.length>=3?`<div class="pds">${[1,0,2].map(i=>pc(T[i],i)).join('')}</div>`:'';
@@ -1143,10 +1162,10 @@ function renderLastMatch(){
  const games=rounds().flat().map(([x,y],i)=>{
   const rr=res(x,y);if(!rr||rr[0]===rr[1])return null;
   const e=M[key(x,y)]||{},dt=parseD(e.d);
-  return {x,y,rr,d:e.d||'',dt,stamp:dt?dt.getTime():(Number(e.updatedAt)||0),i};
+  return {x,y,rr,d:e.d||'',dt,stamp:Number(e.updatedAt)||0,dts:dt?dt.getTime():0,i};
  }).filter(Boolean);
  if(!games.length){el.innerHTML=`<div class="card p-5 sm:p-6 flex items-start gap-4"><div class="w-11 h-11 shrink-0 rounded-2xl bg-fr-100 text-fr-700 flex items-center justify-center">${ic('cup','w-6 h-6')}</div><div><div class="text-xs uppercase tracking-wider text-fr-700 font-extrabold">Azken partida</div><h3 class="font-serif font-bold text-lg text-fr-900 mt-1">Oraindik ez da partidarik jokatu</h3><p class="text-sm text-slate-600 mt-1">Lehen emaitza sartzen denean, hemen agertuko da partidaren kronika.</p></div></div>`;return}
- games.sort((a,b)=>(b.stamp-a.stamp)||(b.i-a.i));
+ games.sort((a,b)=>(b.stamp-a.stamp)||(b.dts-a.dts)||(b.i-a.i));
  const m=games[0],a=m.rr[0],b=m.rr[1],diff=Math.abs(a-b),winner=a>b?m.x:m.y,loser=a>b?m.y:m.x;
  let headline,copy,tone;
  if(diff===1){headline='Azken tantora arteko thrillerra';copy=`Pare-pareko partida, ${a}-${b}: tentsioa azken tantoan erabaki da. Garaileek nerbioak hotz mantendu dituzte; galtzaileek erakutsi dute edozeini aurre egiteko gai direla.`;tone='close'}
